@@ -14,18 +14,15 @@ export default function HomePage() {
       {/* Hero Section */}
       <main className="container mx-auto px-6 py-20">
         <section className="text-center max-w-4xl mx-auto mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0F172A] border border-[#1E293B] text-xs font-mono text-[#38BDF8] mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse"></span>
-            Institutional Terminal • Monad Parallel EVM & Real Equity Oracles
-          </div>
+
 
           <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 text-[#F8FAFC] leading-tight">
-            Institutional Synthetic <br className="hidden sm:inline" />
-            <span className="text-[#38BDF8]">Equity Terminal</span>
+            Trade Real Stocks with <br className="hidden sm:inline" />
+            <span className="text-[#38BDF8]">On-Chain Bonding Curves</span>
           </h1>
 
           <p className="text-lg md:text-xl text-[#94A3B8] mb-10 leading-relaxed max-w-2xl mx-auto">
-            Trade real-world equities (AAPL, TSLA, NVDA, GOOGL, MSFT) anchored to 24h market closing prices with sensitive intraday bonding curves on Monad.
+            Experience real-world equity markets (AAPL, TSLA, NVDA, GOOGL, MSFT) anchored to daily closing prices with high-sensitivity intraday bonding curves on Monad.
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -38,7 +35,7 @@ export default function HomePage() {
             <Link href="/dashboard">
               <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2 border-[#38BDF8] text-[#38BDF8] hover:bg-[#38BDF8]/10 px-8 py-4 text-base font-semibold">
                 <TrendingUp className="h-5 w-5 text-[#38BDF8]" />
-                Live Markets & Trade
+                Live Dashboard
               </Button>
             </Link>
           </div>
