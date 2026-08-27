@@ -53,7 +53,7 @@ export default function AboutPage() {
             <h2 className="text-2xl font-bold text-white">The Team</h2>
           </div>
           <p className="text-[#9a9a9a] text-sm leading-relaxed mb-6">
-            PulseStock was built by a focused engineering team for the Monad Blitz Hackathon, combining expertise in smart contract development, DeFi protocol design, and institutional-grade frontend engineering.
+            PulseStock was built by a focused engineering team combining expertise in smart contract development, DeFi protocol design, and institutional-grade frontend engineering.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="bg-black/60 border border-white/10 rounded-xl p-5 hover:border-white/30 transition-all duration-300">
@@ -66,21 +66,21 @@ export default function AboutPage() {
             </div>
             <div className="bg-black/60 border border-white/10 rounded-xl p-5 hover:border-white/30 transition-all duration-300">
               <p className="text-white font-semibold text-base mb-1">Core Contributors</p>
-              <p className="text-zinc-400 text-sm">Hackathon team — DeFi protocol design & frontend engineering</p>
+              <p className="text-zinc-400 text-sm">DeFi protocol design & frontend engineering</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Built With */}
+      {/* Infrastructure */}
       <section>
         <div className="border border-white/10 bg-zinc-950/60 rounded-xl p-8">
           <div className="flex items-center gap-3 mb-4">
             <Rocket className="h-5 w-5 text-white" />
-            <h2 className="text-2xl font-bold text-white">Built For</h2>
+            <h2 className="text-2xl font-bold text-white">Infrastructure</h2>
           </div>
           <p className="text-[#9a9a9a] text-sm leading-relaxed">
-            PulseStock was built for the <strong className="text-white">Monad Blitz Hackathon</strong> to showcase the potential of Monad&apos;s high-throughput parallel EVM for latency-sensitive DeFi applications. The entire platform — smart contracts, oracle integration, and frontend terminal — was designed and shipped within the hackathon timeline.
+            PulseStock leverages Monad&apos;s high-throughput parallel EVM for latency-sensitive financial applications.
           </p>
         </div>
       </section>

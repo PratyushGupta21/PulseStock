@@ -26,7 +26,7 @@ const faqs = [
   },
   {
     q: "Is this real money or real trading?",
-    a: "No. PulseStock is a testnet simulation built for the Monad Blitz Hackathon. All assets (SUSD, synthetic shares) are testnet tokens with zero real-world value. No actual equities are bought, sold, or held. This is a demonstration of DeFi bonding curve mechanics applied to equity-like instruments."
+    a: "No. PulseStock is a testnet trading simulation. All assets (SUSD, synthetic shares) are testnet tokens with zero real-world value. No actual equities are bought, sold, or held. This is a demonstration of DeFi bonding curve mechanics applied to equity-like instruments."
   },
   {
     q: "What wallets are supported?",
@@ -42,7 +42,7 @@ const faqs = [
   },
   {
     q: "Is the smart contract audited?",
-    a: "The StockAMM contract was built for a hackathon demonstration and has not undergone a formal security audit. The code is open-source and available on GitHub for review. Do not deploy this contract with real assets without a comprehensive audit."
+    a: "The StockAMM contract is a testnet demonstration and has not undergone a formal security audit. The code is open-source and available on GitHub for review. Do not deploy this contract with real assets without a comprehensive audit."
   },
 ]
 

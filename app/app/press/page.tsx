@@ -70,7 +70,7 @@ export default function PressPage() {
           </div>
           <div className="space-y-4">
             {[
-              { date: "Aug 2026", title: "PulseStock Launches at Monad Blitz Hackathon", desc: "Initial release of the synthetic equity trading terminal with 8 real-world tickers, bonding curve AMM, and sub-second Monad execution." },
+              { date: "Aug 2026", title: "PulseStock Synthetic Equity Protocol Deployed on Monad Testnet", desc: "Initial release of the synthetic equity trading terminal with 8 real-world tickers, bonding curve AMM, and sub-second Monad execution." },
               { date: "Aug 2026", title: "Vesper UI Redesign — Liquid Glass Aesthetic", desc: "Complete frontend overhaul to pitch-black canvas, translucent glass cards, and Instrument Serif editorial typography." },
               { date: "Aug 2026", title: "Open-Source Codebase Published", desc: "Full smart contract and frontend source code released on GitHub under MIT license for community review and forking." },
             ].map((item, i) => (

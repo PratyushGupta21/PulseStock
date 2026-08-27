@@ -1,14 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Instrument_Serif } from "next/font/google"
-import { Zap } from "lucide-react"
-
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
-  style: "italic",
-  subsets: ["latin"],
-})
+import { PulseStockLogo } from "@/components/PulseStockLogo"
 
 export function Footer() {
   const platformLinks = [
@@ -37,13 +30,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
           {/* Brand */}
           <div>
-            <Link href="/" className="flex items-center gap-2 text-xl tracking-tight mb-4">
-              <div className="p-1.5 bg-white/10 rounded-lg text-white border border-white/20">
-                <Zap className="h-5 w-5 fill-current" />
-              </div>
-              <span className="font-sans font-bold text-white">Pulse</span>
-              <span className={`${instrumentSerif.className} italic text-zinc-400 font-normal text-2xl -ml-1`}>Stock</span>
-            </Link>
+            <div className="mb-4">
+              <PulseStockLogo />
+            </div>
             <p className="text-[#9a9a9a] text-sm leading-relaxed">
               Synthetic equity trading anchored to real-world closing prices, powered by Monad&apos;s parallel EVM.
             </p>
@@ -95,7 +84,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[#9a9a9a] text-xs font-mono">
-            © 2026 PulseStock. Built for Monad Blitz Hackathon.
+            © 2026 PulseStock. All rights reserved.
           </p>
           <p className="text-[#9a9a9a] text-xs font-mono">
             Real Equity Anchors • Institutional Terminal Architecture
