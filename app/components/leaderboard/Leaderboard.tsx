@@ -23,7 +23,7 @@ export function Leaderboard() {
     address: STOCK_AMM_ADDRESS,
     abi: stockAmmAbi,
     functionName: "getPrice",
-    args: [0],
+    args: [BigInt(0)],
     query: { refetchInterval: 5000 },
   })
 
