@@ -1,30 +1,20 @@
 "use client"
 
 import { useAccount } from "wagmi"
+import { Navbar } from "@/components/Navbar"
 import { ConnectButton } from "@/components/wallet/ConnectButton"
 import { ClaimFundsButton } from "@/components/onboarding/ClaimFundsButton"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Wallet, Zap, CheckCircle2, ArrowRight, BarChart3 } from "lucide-react"
+import { Wallet, Zap, CheckCircle2, ArrowRight } from "lucide-react"
 
 export default function OnboardingPage() {
   const { isConnected } = useAccount()
 
   return (
     <div className="min-h-screen bg-[#080C14] text-[#F8FAFC]">
-      {/* Top Header Navigation */}
-      <header className="border-b border-[#1E293B] bg-[#0F172A] sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="p-2 bg-[#080C14] rounded-lg border border-[#1E293B]">
-              <BarChart3 className="h-5 w-5 text-[#38BDF8]" />
-            </div>
-            <span className="font-serif text-2xl font-bold tracking-tight text-[#F8FAFC]">Monad Market Sim</span>
-          </Link>
-          <ConnectButton />
-        </div>
-      </header>
+      <Navbar />
 
       {/* Main Container */}
       <main className="container mx-auto px-6 py-12 max-w-3xl">
@@ -36,7 +26,7 @@ export default function OnboardingPage() {
             Onboarding & Wallet Provisioning
           </h1>
           <p className="text-[#94A3B8] text-base max-w-xl mx-auto">
-            Set up your Web3 wallet, claim starter liquidity, and enter the Monad synthetic trading ecosystem.
+            Claim your 100,000 SUSD starter funds and trade real equities (AAPL, TSLA, NVDA, GOOGL, MSFT) on Monad testnet.
           </p>
         </div>
 
@@ -70,7 +60,7 @@ export default function OnboardingPage() {
               Step 2: Mint Starter Liquidity (SUSD)
             </CardTitle>
             <CardDescription className="text-[#94A3B8]">
-              Claim 100,000 SUSD starter funds directly from the on-chain faucet. Single claim per address.
+              Receive 100,000 SUSD (SimUSD) play money to start trading. One-time claim per address.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
@@ -83,16 +73,16 @@ export default function OnboardingPage() {
           <CardHeader className="p-0 mb-4">
             <CardTitle className="font-serif text-xl font-bold text-[#F8FAFC] flex items-center gap-3">
               <ArrowRight className="h-5 w-5 text-[#38BDF8]" />
-              Step 3: Access Trading Dashboard
+              Step 3: Start Trading Real Stocks
             </CardTitle>
             <CardDescription className="text-[#94A3B8]">
-              View live price charts, trade 5 synthetic equities, and track portfolio valuation.
+              Head to the dashboard to view live prices anchored to 24h real market closes.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <Link href="/dashboard">
               <Button className="w-full bg-[#22C55E] text-[#080C14] hover:bg-[#16a34a] border border-[#22C55E] py-3 text-base font-semibold">
-                Open Trading Dashboard
+                Open Live Dashboard
               </Button>
             </Link>
           </CardContent>

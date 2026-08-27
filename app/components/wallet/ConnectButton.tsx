@@ -1,35 +1,38 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useAccount, useConnect, useDisconnect } from "wagmi"
+import { useEffect, useState } from "react"
+import { useAccount, useConnect, useDisconnect, useReadContract } from "wagmi"
 import { Button } from "@/components/ui/button"
 import { Wallet, LogOut } from "lucide-react"
 import { formatUnits, shortenAddress } from "@/lib/utils"
 import { PLAY_MONEY_ADDRESS, playMoneyAbi } from "@/lib/contracts/contracts"
-import { useReadContract } from "wagmi"
 
-export function ConnectButton() {
+export function ConnectButton({ className }: { className?: string }) {
   const [mounted, setMounted] = useState(false)
   const { address, isConnected } = useAccount()
   const { connectAsync, connectors } = useConnect()
   const { disconnect } = useDisconnect()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const { data: balance } = useReadContract({
     address: PLAY_MONEY_ADDRESS,
     abi: playMoneyAbi,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
-    query: { enabled: !!address },
+    query: { enabled: !!address && mounted },
   })
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const handleConnect = async () => {
-    const connector = connectors.find((c) => c.id === "metaMask" || c.id === "injected") || connectors[0]
-    if (connector) {
-      await connectAsync({ connector })
+    try {
+      const connector = connectors.find((c) => c.id === "metaMask" || c.id === "injected") || connectors[0]
+      if (connector) {
+        await connectAsync({ connector })
+      }
+    } catch (e) {
+      console.error("Connect error:", e)
     }
   }
 
@@ -37,7 +40,7 @@ export function ConnectButton() {
   if (!mounted) {
     return (
       <button
-        className="inline-flex items-center gap-2 bg-[#0F172A] text-[#F8FAFC] px-5 py-2 rounded-md border border-[#38BDF8] text-sm font-medium opacity-50 cursor-not-allowed"
+        className={`inline-flex items-center gap-2 bg-[#0F172A] text-[#F8FAFC] px-5 py-2 rounded-md border border-[#38BDF8] text-sm font-medium opacity-50 cursor-not-allowed ${className || ""}`}
         disabled
       >
         <Wallet className="h-4 w-4 text-[#38BDF8]" />
@@ -50,7 +53,7 @@ export function ConnectButton() {
     return (
       <Button
         onClick={handleConnect}
-        className="gap-2 bg-[#0F172A] text-[#F8FAFC] hover:bg-[#38BDF8]/10 border border-[#38BDF8] px-5 py-2 text-sm font-medium"
+        className={`gap-2 bg-[#0F172A] text-[#F8FAFC] hover:bg-[#38BDF8]/10 border border-[#38BDF8] px-5 py-2 text-sm font-medium ${className || ""}`}
       >
         <Wallet className="h-4 w-4 text-[#38BDF8]" />
         Connect Wallet
@@ -59,7 +62,7 @@ export function ConnectButton() {
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className={`flex items-center gap-3 ${className || ""}`}>
       <div className="flex items-center gap-3 px-4 py-2 bg-[#0F172A] border border-[#1E293B] rounded-lg">
         <div className="flex items-center gap-2">
           <Wallet className="h-4 w-4 text-[#38BDF8]" />

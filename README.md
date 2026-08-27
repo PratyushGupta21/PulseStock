@@ -1,61 +1,110 @@
-# Monad Market Sim
+# ⚡ Monad Market Sim — Hybrid Equity AMM
 
-Stock market simulator for Monad Blitz hackathon. Built with Foundry (Solidity) + Next.js (React) + wagmi/viem.
+> A fully on-chain hybrid stock market simulator built for **Monad** — combining **24-hour real equity price anchors** (AAPL, TSLA, NVDA, GOOGL, MSFT, etc.) with **sensitive intraday bonding curves** (`x * y = k`).
 
-## Architecture
+---
+
+## 🧠 The Hybrid Model
+
+Unlike pure AMMs or oracle-only platforms, **Monad Market Sim** uses a hybrid price engine:
+
+1. **Daily Real-World Anchoring**: Once every 24 hours, an automated price setter updates the base prices on-chain using yesterday's real closing prices from NYSE/NASDAQ.
+2. **Sensitive Bonding Curve Price Discovery**: Intraday price movements are driven entirely by user trades using a constant product bonding curve (`x * y = k`). With 2,000 SUSD share liquidity per pool, every trade visibly shifts the price relative to the daily anchor.
+3. **Sub-second Event-Driven UI**: Built on Monad's high-throughput parallel EVM, contract events instantly push price updates to Next.js charts without requiring WebSockets.
+
+---
+
+## 🎯 Key Features & Benefits
+
+| Feature | Details |
+|---|---|
+| 📈 **Real Equity Tickers** | AAPL, TSLA, NVDA, GOOGL, MSFT, AMZN, META, COIN, and extensible to hundreds more |
+| ⚓ **24-Hour Base Anchor** | Daily re-anchoring to real closing prices prevents unrealistic drift |
+| ⚡ **Sensitive Price Shifts** | Trades dynamically push the price up (buys) or down (sells) instantly |
+| 🌐 **Dynamic Multi-Stock Registry** | Smart contract supports adding unlimited stocks dynamically via `addStock()` |
+| 🤖 **Automated Oracle Script** | Included `price-setter` script updates daily prices on Monad automatically |
+| 🆓 **Zero-Cost Sandbox** | Claim 100,000 SimUSD (SUSD) from the faucet and start trading |
+
+---
+
+## 🏗 Architecture
 
 ```
 monad-market-sim/
-├── /contracts     # Foundry Solidity project
+├── contracts/                  # Foundry (Solidity) project
 │   ├── contracts/
-│   │   ├── PlayMoney.sol     # ERC20 SimUSD (SUSD)
-│   │   └── StockAMM.sol      # Bonding curve AMM for 5 stocks
-│   ├── test/
-│   │   └── StockAMM.t.sol    # Foundry tests
-│   ├── script/               # Deployment scripts
-│   └── foundry.toml          # Monad testnet config
-└── /app           # Next.js frontend
-    ├── app/       # App Router pages
-    ├── components/# React components
-    ├── lib/       # wagmi config, contracts, utils
-    └── public/
+│   │   ├── PlayMoney.sol       # ERC-20 SimUSD (SUSD) faucet token
+│   │   └── StockAMM.sol        # Dynamic multi-stock hybrid AMM contract
+│   ├── script/
+│   │   └── Deploy.s.sol        # Deploys contract with initial equity prices
+│   └── test/
+│       └── StockAMM.t.sol      # Foundry unit tests for dynamic pricing & resets
+│
+├── price-setter/               # Daily Oracle Price Setter Script
+│   ├── index.ts                # Fetches real closing prices & submits batch tx
+│   └── package.json
+│
+└── app/                        # Next.js 14 (App Router) frontend
+    ├── app/
+    │   ├── dashboard/          # Real-time stock cards with 24h anchors & charts
+    │   ├── trade/              # Buy/Sell trading panel with estimated outputs
+    │   ├── portfolio/          # Real-time cash balance and market prices
+    │   └── leaderboard/        # Rank traders by portfolio value
+    ├── components/             # Reusable React & wagmi components
+    └── lib/contracts/          # Wagmi ABI definitions & stock metadata
 ```
 
-## Smart Contracts
+---
 
-### PlayMoney.sol
-- ERC20 token: "SimUSD" (SUSD), 18 decimals
-- `claimStarterFunds()`: Mints 100,000 SUSD to caller (once per address)
-- `hasClaimed` mapping tracks claims
+## 🔬 Smart Contract Details (`StockAMM.sol`)
 
-### StockAMM.sol
-- 5 hardcoded stocks: MNDX, CHAI, VIBE, GRIT, TECH
-- Constant-product bonding curve per stock: `cashReserve × shareReserve = k`
-- `buy(stockId, cashAmount)`: Spend SUSD, receive shares, price increases
-- `sell(stockId, shareAmount)`: Spend shares, receive SUSD, price decreases
-- `getPrice(stockId)`: Returns spot price (SUSD per share, scaled 1e18)
-- `Trade` event emitted on every trade for live chart updates
+### Pool Struct
+```solidity
+struct StockInfo {
+    string ticker;
+    string name;
+    uint256 cashReserve;
+    uint256 shareReserve;
+    uint256 basePrice;  // Yesterday's real close (1e18 scaled)
+    uint256 lastReset;  // Timestamp of last 24h reset
+}
+```
 
-## Frontend Features
+### Daily Price Re-Anchoring
+```solidity
+function setDailyBasePrice(uint256 stockId, uint256 realPrice) public onlyOwner {
+    StockInfo storage stock = stocks[stockId];
+    stock.cashReserve = (realPrice * shareLiquidity) / 1e18;
+    stock.shareReserve = shareLiquidity;
+    stock.basePrice = realPrice;
+    stock.lastReset = block.timestamp;
+    emit DailyPriceSet(stockId, realPrice, block.timestamp);
+}
+```
 
-- **Wallet Connection**: MetaMask via wagmi
-- **Onboarding**: Claim 100k SUSD starter funds
-- **Dashboard**: Live price charts (Recharts) for all 5 stocks
-- **Trade Panel**: Buy/sell with estimated output, pending/confirmed toasts
-- **Portfolio**: Cash balance + holdings (share balance × current price)
-- **Leaderboard**: Top traders by portfolio value (client-side from Trade events)
+---
 
-## Quick Start
+## 🤖 Daily Price Setter Oracle (`price-setter/`)
+
+To run the daily price setter script:
+
+```bash
+cd price-setter
+npm install
+cp .env.example .env
+# Set PRIVATE_KEY and STOCK_AMM_ADDRESS in .env
+npm run update-prices
+```
+
+---
+
+## 🚀 Quick Start
 
 ### 1. Install Dependencies
 
 ```bash
-# Contracts
-cd contracts
-forge install
-
 # Frontend
-cd ../app
+cd app
 npm install
 ```
 
@@ -64,105 +113,29 @@ npm install
 ```bash
 cd app
 cp .env.example .env.local
-# Edit .env.local with your Thirdweb API key and Wagmi project ID
 ```
 
-### 3. Deploy Contracts (Local Anvil)
-
-```bash
-cd contracts
-anvil  # In separate terminal
-forge script script/Deploy.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
-```
-
-### 4. Update Contract Addresses
-
-Copy deployed addresses to `app/.env.local`:
-```env
-NEXT_PUBLIC_PLAY_MONEY_ADDRESS=0x...
-NEXT_PUBLIC_STOCK_AMM_ADDRESS=0x...
-```
-
-### 5. Run Frontend
+### 3. Run Dev Server
 
 ```bash
 cd app
 npm run dev
 ```
 
-Open http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000).
 
-## Monad Testnet Deployment
+---
 
-1. Add Monad testnet to Foundry:
-```toml
-# contracts/foundry.toml
-[rpc_endpoints]
-monad_testnet = "https://10143.rpc.thirdweb.com/${THIRDWEB_API_KEY}"
+## 🎮 Demo Flow
 
-[profile.default]
-chain-id = 10143
-```
+1. Connect MetaMask to **Monad Testnet** (Chain ID: `10143`)
+2. Claim 100,000 SUSD starter funds
+3. View Dashboard to see live prices anchored to AAPL ($225), TSLA ($210), NVDA ($125), etc.
+4. Trade any stock — see immediate price impact due to high bonding curve sensitivity
+5. Run `price-setter` script to simulate the daily 24h re-anchoring to new closing prices
 
-2. Deploy:
-```bash
-forge script script/Deploy.s.sol --rpc-url monad_testnet --broadcast --private-key $PRIVATE_KEY
-```
+---
 
-3. Update frontend `.env.local` with testnet addresses
+## 📄 License
 
-4. Deploy to Vercel:
-```bash
-vercel --prod
-```
-
-## Key Tech Stack
-
-- **Smart Contracts**: Solidity ^0.8.20, Foundry (forge/cast/anvil)
-- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
-- **Web3**: wagmi v2 + viem (NOT ethers.js)
-- **Wallet**: MetaMask connector
-- **Charts**: Recharts (live updates via `useWatchContractEvent`)
-- **UI**: shadcn/ui components, Sonner toasts
-- **No Backend**: All state on-chain, deployable to Vercel as static/SSR
-
-## Demo Flow
-
-1. Connect MetaMask → Switch to Monad Testnet (Chain ID: 10143)
-2. Click "Claim Starter Funds" → 100,000 SUSD minted
-3. View Dashboard → 5 live charts at initial price (1 SUSD = 1 share)
-4. Go to Trade → Buy MNDX with 100 SUSD
-5. Watch chart update INSTANTLY on Monad's sub-second finality
-6. Check Portfolio → See updated holdings
-7. Check Leaderboard → See your rank
-
-## Contract Math (Bonding Curve)
-
-For each stock, constant product: `cashReserve × shareReserve = k`
-
-**Buy**: User sends `cashAmount` SUSD
-```
-sharesOut = (shareReserve × cashAmount) / (cashReserve + cashAmount)
-cashReserve += cashAmount
-shareReserve -= sharesOut
-newPrice = cashReserve / shareReserve
-```
-
-**Sell**: User sends `shareAmount` shares
-```
-cashOut = (cashReserve × shareAmount) / (shareReserve + shareAmount)
-shareReserve += shareAmount
-cashReserve -= cashOut
-newPrice = cashReserve / shareReserve
-```
-
-## Testing
-
-```bash
-cd contracts
-forge test -vvv
-```
-
-## License
-
-MIT
+MIT — Built for **Monad Blitz Hackathon**.

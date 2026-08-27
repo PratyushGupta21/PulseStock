@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Loader2, ArrowUpRight, ArrowDownRight } from "lucide-react"
+import { Loader2, ArrowUpRight, ArrowDownRight, Anchor } from "lucide-react"
 import { toast } from "sonner"
 import { STOCK_AMM_ADDRESS, stockAmmAbi, PLAY_MONEY_ADDRESS, playMoneyAbi } from "@/lib/contracts/contracts"
 import { formatUnits, formatPrice } from "@/lib/utils"
@@ -14,19 +14,29 @@ import { formatUnits, formatPrice } from "@/lib/utils"
 interface TradePanelProps {
   stockId: number
   ticker: string
+  name?: string
+  defaultBasePrice?: number
 }
 
-export function TradePanel({ stockId, ticker }: TradePanelProps) {
+export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePanelProps) {
   const { address, isConnected } = useAccount()
   const [cashAmount, setCashAmount] = useState("")
   const [shareAmount, setShareAmount] = useState("")
   const [isBuy, setIsBuy] = useState(true)
 
-  const { data: price } = useReadContract({
+  const { data: stockData } = useReadContract({
+    address: STOCK_AMM_ADDRESS,
+    abi: stockAmmAbi,
+    functionName: "getStock",
+    args: [BigInt(stockId)],
+    query: { refetchInterval: 2000 },
+  })
+
+  const { data: spotPrice } = useReadContract({
     address: STOCK_AMM_ADDRESS,
     abi: stockAmmAbi,
     functionName: "getPrice",
-    args: [stockId],
+    args: [BigInt(stockId)],
     query: { refetchInterval: 2000 },
   })
 
@@ -49,7 +59,10 @@ export function TradePanel({ stockId, ticker }: TradePanelProps) {
   const { writeContract, data: hash, isPending } = useWriteContract()
   const { isLoading: isConfirming, isSuccess, isError, error } = useWaitForTransactionReceipt({ hash })
 
-  const currentPrice = price ? Number(price) / 1e18 : 1
+  const currentPrice = spotPrice ? Number(spotPrice) / 1e18 : (defaultBasePrice || 100)
+  const basePrice = stockData?.[4] ? Number(stockData[4]) / 1e18 : (defaultBasePrice || 100)
+  const displayName = stockData?.[1] || name || ""
+
   const estimatedOut = isBuy
     ? Number(cashAmount || 0) / currentPrice
     : Number(shareAmount || 0) * currentPrice
@@ -87,20 +100,33 @@ export function TradePanel({ stockId, ticker }: TradePanelProps) {
       if (isBuy) {
         const amountInWei = BigInt(Math.floor(Number(cashAmount) * 1e18))
         if (amountInWei <= BigInt(0)) return
+
+        if (!allowance || allowance < amountInWei) {
+          toast.info("Approving SUSD transfer...")
+          writeContract({
+            address: PLAY_MONEY_ADDRESS,
+            abi: playMoneyAbi,
+            functionName: "approve",
+            args: [STOCK_AMM_ADDRESS, BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")],
+          })
+          return
+        }
+
         writeContract({
           address: STOCK_AMM_ADDRESS,
           abi: stockAmmAbi,
           functionName: "buy",
-          args: [stockId, amountInWei],
+          args: [BigInt(stockId), amountInWei],
         })
       } else {
         const amountInWei = BigInt(Math.floor(Number(shareAmount) * 1e18))
         if (amountInWei <= BigInt(0)) return
+
         writeContract({
           address: STOCK_AMM_ADDRESS,
           abi: stockAmmAbi,
           functionName: "sell",
-          args: [stockId, amountInWei],
+          args: [BigInt(stockId), amountInWei],
         })
       }
     } catch (e) {
@@ -124,12 +150,19 @@ export function TradePanel({ stockId, ticker }: TradePanelProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="font-serif text-2xl font-bold text-[#F8FAFC] flex items-center gap-2">
             <span>{ticker}</span>
-            <span className="text-xs font-mono text-[#38BDF8] font-normal px-2.5 py-1 rounded bg-[#080C14] border border-[#1E293B]">
-              Spot: {typeof price === "bigint" ? `${formatPrice(price)} SUSD` : "..."}
-            </span>
+            {displayName && <span className="text-xs text-[#94A3B8] font-normal">{displayName}</span>}
           </CardTitle>
+          <div className="text-right">
+            <span className="text-xs font-mono text-[#38BDF8] font-semibold px-2.5 py-1 rounded bg-[#080C14] border border-[#1E293B] block">
+              Spot: {currentPrice.toFixed(2)} SUSD
+            </span>
+            <span className="text-[11px] text-[#94A3B8] font-mono flex items-center justify-end gap-1 mt-1">
+              <Anchor className="h-3 w-3 text-[#38BDF8]" /> Anchor: ${basePrice.toFixed(2)}
+            </span>
+          </div>
         </div>
       </CardHeader>
+
       <CardContent className="p-0 space-y-6">
         {/* Buy / Sell Toggle Buttons */}
         <div className="grid grid-cols-2 gap-2 p-1 bg-[#080C14] rounded-lg border border-[#1E293B]">
@@ -202,12 +235,12 @@ export function TradePanel({ stockId, ticker }: TradePanelProps) {
         <div className="bg-[#080C14] p-4 rounded-lg border border-[#1E293B] space-y-2 text-xs text-[#94A3B8]">
           <div className="flex justify-between">
             <span>Execution Price</span>
-            <span className="font-mono font-semibold text-[#F8FAFC]">{typeof price === "bigint" ? `${formatPrice(price)} SUSD` : "—"}</span>
+            <span className="font-mono font-semibold text-[#F8FAFC]">${currentPrice.toFixed(2)} SUSD</span>
           </div>
           <div className="flex justify-between">
             <span>Estimated Received</span>
             <span className="font-mono font-semibold text-[#38BDF8]">
-              {isBuy ? `${estimatedOut.toFixed(4)} shares` : `${estimatedOut.toFixed(2)} SUSD`}
+              {isBuy ? `${estimatedOut.toFixed(4)} shares` : `$${estimatedOut.toFixed(2)} SUSD`}
             </span>
           </div>
           <div className="flex justify-between">
@@ -235,7 +268,7 @@ export function TradePanel({ stockId, ticker }: TradePanelProps) {
         ) : (
           <Button
             onClick={handleTrade}
-            disabled={isTradePending || !isConnected || !price || (isBuy && (!cashAmount || Number(cashAmount) <= 0)) || (!isBuy && (!shareAmount || Number(shareAmount) <= 0))}
+            disabled={isTradePending || !isConnected || (isBuy && (!cashAmount || Number(cashAmount) <= 0)) || (!isBuy && (!shareAmount || Number(shareAmount) <= 0))}
             className={`w-full h-12 text-base font-semibold border ${
               isBuy
                 ? "bg-[#22C55E] text-[#080C14] hover:bg-[#16a34a] border-[#22C55E]"

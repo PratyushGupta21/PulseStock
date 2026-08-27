@@ -22,7 +22,7 @@ export function Portfolio() {
       address: STOCK_AMM_ADDRESS,
       abi: stockAmmAbi,
       functionName: "getPrice",
-      args: [stock.id],
+      args: [BigInt(stock.id)],
       query: { refetchInterval: 3000 },
     })
 
@@ -30,12 +30,12 @@ export function Portfolio() {
       address: STOCK_AMM_ADDRESS,
       abi: stockAmmAbi,
       functionName: "getUserShares",
-      args: address ? [address, stock.id] : undefined,
+      args: address ? [address, BigInt(stock.id)] : undefined,
       query: { enabled: !!address, refetchInterval: 3000 },
     })
 
     const numShares = typeof shares === "bigint" ? Number(shares) / 1e18 : 0
-    const numPrice = typeof price === "bigint" ? Number(price) / 1e18 : 0
+    const numPrice = typeof price === "bigint" ? Number(price) / 1e18 : stock.defaultBasePrice
     const value = numShares * numPrice
 
     return { stock, price, shares, numShares, numPrice, value }
@@ -65,7 +65,7 @@ export function Portfolio() {
           <div>
             <div className="text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">Total Net Portfolio Value</div>
             <div className="font-serif text-3xl font-bold text-[#38BDF8]">
-              {totalValue.toFixed(2)} SUSD
+              ${totalValue.toFixed(2)} SUSD
             </div>
           </div>
           <div>
@@ -79,24 +79,28 @@ export function Portfolio() {
         <Table>
           <TableHeader>
             <TableRow className="bg-[#080C14] border-b border-[#1E293B]">
-              <TableHead className="text-[#94A3B8] font-mono text-xs uppercase font-semibold">Asset Ticker</TableHead>
+              <TableHead className="text-[#94A3B8] font-mono text-xs uppercase font-semibold">Ticker</TableHead>
+              <TableHead className="text-[#94A3B8] font-mono text-xs uppercase font-semibold">Company</TableHead>
+              <TableHead className="text-right text-[#94A3B8] font-mono text-xs uppercase font-semibold">24h Anchor</TableHead>
               <TableHead className="text-right text-[#94A3B8] font-mono text-xs uppercase font-semibold">Spot Price</TableHead>
               <TableHead className="text-right text-[#94A3B8] font-mono text-xs uppercase font-semibold">Held Quantity</TableHead>
               <TableHead className="text-right text-[#94A3B8] font-mono text-xs uppercase font-semibold">Position Value</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="bg-[#0F172A] divide-y divide-[#1E293B]">
-            {holdings.map(({ stock, price, shares, value }) => (
+            {holdings.map(({ stock, price, shares, numShares, value }) => (
               <TableRow key={stock.id} className="hover:bg-[#1E293B]/50 border-b border-[#1E293B]">
                 <TableCell className="font-serif font-bold text-[#F8FAFC] text-base">{stock.ticker}</TableCell>
+                <TableCell className="text-[#94A3B8] text-sm">{stock.name}</TableCell>
+                <TableCell className="text-right font-mono text-[#94A3B8]">${stock.defaultBasePrice.toFixed(2)}</TableCell>
                 <TableCell className="text-right font-mono text-[#38BDF8]">
-                  {typeof price === "bigint" ? `${formatPrice(price)} SUSD` : "Loading..."}
+                  {typeof price === "bigint" ? `${formatPrice(price)} SUSD` : `$${stock.defaultBasePrice.toFixed(2)}`}
                 </TableCell>
                 <TableCell className="text-right font-mono text-[#94A3B8]">
                   {typeof shares === "bigint" ? `${(Number(shares) / 1e18).toFixed(4)}` : "0.0000"}
                 </TableCell>
                 <TableCell className="text-right font-mono font-semibold text-[#F8FAFC]">
-                  {`${value.toFixed(2)} SUSD`}
+                  ${value.toFixed(2)} SUSD
                 </TableCell>
               </TableRow>
             ))}

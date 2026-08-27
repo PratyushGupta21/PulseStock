@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from "wagmi"
 import { Button } from "@/components/ui/button"
 import { Loader2, CheckCircle2 } from "lucide-react"
@@ -11,22 +11,28 @@ export function ClaimFundsButton() {
   const [mounted, setMounted] = useState(false)
   const { address, isConnected } = useAccount()
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const { data: hasClaimed } = useReadContract({
     address: PLAY_MONEY_ADDRESS,
     abi: [
-      "function hasClaimed(address) view returns (bool)",
+      {
+        inputs: [{ name: "", type: "address" }],
+        name: "hasClaimed",
+        outputs: [{ name: "", type: "bool" }],
+        stateMutability: "view",
+        type: "function"
+      }
     ] as const,
     functionName: "hasClaimed",
     args: address ? [address] : undefined,
-    query: { enabled: !!address },
+    query: { enabled: !!address && mounted },
   })
 
   const { writeContract, data: hash, isPending } = useWriteContract()
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash })
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const handleClaim = () => {
     if (!address) return
@@ -37,19 +43,7 @@ export function ClaimFundsButton() {
     })
   }
 
-  // Static fallback during SSR
-  if (!mounted) {
-    return (
-      <button
-        className="inline-flex items-center gap-2 bg-[#0F172A] text-[#94A3B8] px-6 py-2.5 rounded-md border border-[#1E293B] text-sm font-medium opacity-50 cursor-not-allowed"
-        disabled
-      >
-        Connect Wallet First
-      </button>
-    )
-  }
-
-  if (!isConnected) {
+  if (!mounted || !isConnected) {
     return (
       <Button disabled variant="secondary" className="gap-2 bg-[#0F172A] text-[#94A3B8] border border-[#1E293B]">
         Connect Wallet First
