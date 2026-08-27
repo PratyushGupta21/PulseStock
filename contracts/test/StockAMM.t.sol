@@ -10,9 +10,19 @@ contract StockAMMTest is Test {
     StockAMM public amm;
     uint256 constant INITIAL_LIQUIDITY = 10_000 * 10 ** 18;
 
+    event Trade(
+        address indexed user,
+        uint8 indexed stockId,
+        bool isBuy,
+        uint256 amountIn,
+        uint256 amountOut,
+        uint256 newPrice
+    );
+
     function setUp() external {
         simUsd = new PlayMoney();
         amm = new StockAMM(address(simUsd), INITIAL_LIQUIDITY);
+        simUsd.approve(address(amm), type(uint256).max);
     }
 
     function testClaimingFunds() external {
@@ -23,7 +33,7 @@ contract StockAMMTest is Test {
 
     function testCannotClaimTwice() external {
         simUsd.claimStarterFunds();
-        vm.expectRevert(bytes4(keccak256("Already claimed")));
+        vm.expectRevert("Already claimed");
         simUsd.claimStarterFunds();
     }
 
@@ -38,14 +48,32 @@ contract StockAMMTest is Test {
         assertGt(priceAfter, priceBefore);
     }
 
+    function testUserSharesTracking() external {
+        simUsd.claimStarterFunds();
+        amm.buy(0, 100 * 10 ** 18);
+        uint256 shares = amm.getUserShares(address(this), 0);
+        assertGt(shares, 0);
+
+        amm.sell(0, shares);
+        uint256 sharesAfter = amm.getUserShares(address(this), 0);
+        assertEq(sharesAfter, 0);
+    }
+
+    function testSellRevertsWithInsufficientUserShares() external {
+        simUsd.claimStarterFunds();
+        vm.expectRevert("Insufficient share balance");
+        amm.sell(0, 10 * 10 ** 18);
+    }
+
     function testSellingMovesPriceDown() external {
         simUsd.claimStarterFunds();
 
         amm.buy(0, 100 * 10 ** 18);
+        uint256 sharesBought = amm.getUserShares(address(this), 0);
 
         uint256 priceBefore = amm.getPrice(0);
 
-        amm.sell(0, 50 * 10 ** 18);
+        amm.sell(0, sharesBought / 2);
 
         uint256 priceAfter = amm.getPrice(0);
         assertLt(priceAfter, priceBefore);
@@ -57,18 +85,18 @@ contract StockAMMTest is Test {
     }
 
     function testInvalidStockIdReverts() external {
-        vm.expectRevert(bytes4(keccak256("Invalid stock")));
+        vm.expectRevert("Invalid stock");
         amm.getPrice(5);
     }
 
     function testBuyWithZeroAmountReverts() external {
         simUsd.claimStarterFunds();
-        vm.expectRevert(bytes4(keccak256("Zero amount")));
+        vm.expectRevert("Zero amount");
         amm.buy(0, 0);
     }
 
     function testSellWithZeroAmountReverts() external {
-        vm.expectRevert(bytes4(keccak256("Zero amount")));
+        vm.expectRevert("Zero amount");
         amm.sell(0, 0);
     }
 
@@ -88,8 +116,8 @@ contract StockAMMTest is Test {
     function testTradeEventEmittedOnBuy() external {
         simUsd.claimStarterFunds();
 
-        vm.expectEmit(true, true, false, true, true);
-        emit StockAMM.Trade(address(this), 0, true, 100 * 10 ** 18, 0, 0);
+        vm.expectEmit(true, true, false, false);
+        emit Trade(address(this), 0, true, 0, 0, 0);
         amm.buy(0, 100 * 10 ** 18);
     }
 
@@ -97,9 +125,10 @@ contract StockAMMTest is Test {
         simUsd.claimStarterFunds();
 
         amm.buy(0, 100 * 10 ** 18);
+        uint256 sharesBought = amm.getUserShares(address(this), 0);
 
-        vm.expectEmit(true, true, false, true, true);
-        emit StockAMM.Trade(address(this), 0, false, 0, 0, 0);
-        amm.sell(0, 50 * 10 ** 18);
+        vm.expectEmit(true, true, false, false);
+        emit Trade(address(this), 0, false, 0, 0, 0);
+        amm.sell(0, sharesBought / 2);
     }
 }

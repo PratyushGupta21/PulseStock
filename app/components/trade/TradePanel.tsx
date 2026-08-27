@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Loader2, ArrowUpRight, ArrowDownRight } from "lucide-react"
 import { toast } from "sonner"
-import { STOCK_AMM_ADDRESS, STOCKS, stockAmmAbi, PLAY_MONEY_ADDRESS, playMoneyAbi } from "@/lib/contracts/contracts"
+import { STOCK_AMM_ADDRESS, stockAmmAbi, PLAY_MONEY_ADDRESS, playMoneyAbi } from "@/lib/contracts/contracts"
 import { formatUnits, formatPrice } from "@/lib/utils"
 
 interface TradePanelProps {
@@ -38,13 +38,47 @@ export function TradePanel({ stockId, ticker }: TradePanelProps) {
     query: { enabled: !!address },
   })
 
+  const { data: allowance } = useReadContract({
+    address: PLAY_MONEY_ADDRESS,
+    abi: playMoneyAbi,
+    functionName: "allowance",
+    args: address ? [address, STOCK_AMM_ADDRESS] : undefined,
+    query: { enabled: !!address, refetchInterval: 2000 },
+  })
+
   const { writeContract, data: hash, isPending } = useWriteContract()
   const { isLoading: isConfirming, isSuccess, isError, error } = useWaitForTransactionReceipt({ hash })
 
   const currentPrice = price ? Number(price) / 1e18 : 1
   const estimatedOut = isBuy
-    ? Number(cashAmount) / currentPrice
-    : Number(shareAmount) * currentPrice
+    ? Number(cashAmount || 0) / currentPrice
+    : Number(shareAmount || 0) * currentPrice
+
+  const requiredWei = isBuy && cashAmount ? BigInt(Math.floor(Number(cashAmount) * 1e18)) : BigInt(0)
+  const currentAllowance = typeof allowance === "bigint" ? allowance : BigInt(0)
+  const needsApproval = isBuy && requiredWei > BigInt(0) && currentAllowance < requiredWei
+
+  const handlePercentageSelect = (pct: number) => {
+    if (!balance || !isBuy) return
+    const maxBalance = Number(balance) / 1e18
+    const selected = (maxBalance * pct).toFixed(4)
+    setCashAmount(selected)
+  }
+
+  const handleApprove = async () => {
+    if (!address || !cashAmount) return
+    try {
+      const amountInWei = BigInt(Math.floor(Number(cashAmount) * 1e18))
+      writeContract({
+        address: PLAY_MONEY_ADDRESS,
+        abi: playMoneyAbi,
+        functionName: "approve",
+        args: [STOCK_AMM_ADDRESS, amountInWei * BigInt(100)],
+      })
+    } catch (e) {
+      toast.error("Approval failed", { description: (e as Error).message })
+    }
+  }
 
   const handleTrade = async () => {
     if (!address) return
@@ -52,7 +86,7 @@ export function TradePanel({ stockId, ticker }: TradePanelProps) {
     try {
       if (isBuy) {
         const amountInWei = BigInt(Math.floor(Number(cashAmount) * 1e18))
-        if (amountInWei <= 0n) return
+        if (amountInWei <= BigInt(0)) return
         writeContract({
           address: STOCK_AMM_ADDRESS,
           abi: stockAmmAbi,
@@ -61,7 +95,7 @@ export function TradePanel({ stockId, ticker }: TradePanelProps) {
         })
       } else {
         const amountInWei = BigInt(Math.floor(Number(shareAmount) * 1e18))
-        if (amountInWei <= 0n) return
+        if (amountInWei <= BigInt(0)) return
         writeContract({
           address: STOCK_AMM_ADDRESS,
           abi: stockAmmAbi,
@@ -77,91 +111,151 @@ export function TradePanel({ stockId, ticker }: TradePanelProps) {
   const isTradePending = isPending || isConfirming
 
   if (isSuccess) {
-    toast.success("Trade confirmed!", { description: `Trade executed on Monad testnet` })
+    toast.success("Order Executed!", { description: `Trade successfully broadcast to Monad Testnet` })
   }
 
   if (isError) {
-    toast.error("Trade failed", { description: error?.message || "Unknown error" })
+    toast.error("Execution Reverted", { description: error?.message || "Contract transaction failed" })
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          {ticker} Trade
-        </CardTitle>
+    <Card className="w-full bg-[#0F172A] border border-[#1E293B] p-6 md:p-8 rounded-xl shadow-none">
+      <CardHeader className="p-0 mb-6">
+        <div className="flex items-center justify-between">
+          <CardTitle className="font-serif text-2xl font-bold text-[#F8FAFC] flex items-center gap-2">
+            <span>{ticker}</span>
+            <span className="text-xs font-mono text-[#38BDF8] font-normal px-2.5 py-1 rounded bg-[#080C14] border border-[#1E293B]">
+              Spot: {typeof price === "bigint" ? `${formatPrice(price)} SUSD` : "..."}
+            </span>
+          </CardTitle>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex gap-2">
-          <Button
-            variant={isBuy ? "default" : "outline"}
+      <CardContent className="p-0 space-y-6">
+        {/* Buy / Sell Toggle Buttons */}
+        <div className="grid grid-cols-2 gap-2 p-1 bg-[#080C14] rounded-lg border border-[#1E293B]">
+          <button
+            type="button"
             onClick={() => setIsBuy(true)}
-            className="flex-1"
+            className={`flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-semibold transition-all ${
+              isBuy
+                ? "bg-[#22C55E] text-[#080C14] shadow-none"
+                : "text-[#94A3B8] hover:text-[#F8FAFC]"
+            }`}
           >
-            <ArrowUpRight className="h-4 w-4 mr-1" />
-            Buy
-          </Button>
-          <Button
-            variant={!isBuy ? "default" : "outline"}
+            <ArrowUpRight className="h-4 w-4" />
+            Buy {ticker}
+          </button>
+          <button
+            type="button"
             onClick={() => setIsBuy(false)}
-            className="flex-1"
+            className={`flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-semibold transition-all ${
+              !isBuy
+                ? "bg-[#EF4444] text-[#F8FAFC] shadow-none"
+                : "text-[#94A3B8] hover:text-[#F8FAFC]"
+            }`}
           >
-            <ArrowDownRight className="h-4 w-4 mr-1" />
-            Sell
-          </Button>
+            <ArrowDownRight className="h-4 w-4" />
+            Sell {ticker}
+          </button>
         </div>
 
-        <Separator />
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">
-            {isBuy ? "SUSD Amount" : "Share Amount"}
-          </label>
+        {/* Input Amount Section */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-sm">
+            <label className="font-medium text-[#F8FAFC]">
+              {isBuy ? "SUSD Order Value" : "Shares Quantity"}
+            </label>
+            <span className="font-mono text-xs text-[#94A3B8]">
+              Available: {typeof balance === "bigint" ? `${formatUnits(balance)} SUSD` : "0.0000 SUSD"}
+            </span>
+          </div>
           <Input
             type="number"
             step="0.0001"
             value={isBuy ? cashAmount : shareAmount}
             onChange={(e) => isBuy ? setCashAmount(e.target.value) : setShareAmount(e.target.value)}
-            placeholder={isBuy ? "Enter SUSD amount" : "Enter share amount"}
+            placeholder={isBuy ? "0.00 SUSD" : "0.0000 Shares"}
             disabled={isTradePending || !isConnected}
+            className="bg-[#080C14] border-[#1E293B] text-[#F8FAFC] h-12 font-mono text-base focus-visible:ring-[#38BDF8]"
           />
         </div>
 
-        {price && (
-          <div className="text-sm text-muted-foreground space-y-1">
-            <div>Current Price: <span className="font-mono">{formatPrice(price)} SUSD</span></div>
-            <div>
-              Estimated Out:{" "}
-              <span className="font-mono font-medium text-foreground">
-                {isBuy ? estimatedOut.toFixed(6) : estimatedOut.toFixed(2)}
-                {isBuy ? " shares" : " SUSD"}
-              </span>
-            </div>
+        {/* Quick Preset Buttons (for Buy mode) */}
+        {isBuy && (
+          <div className="flex gap-2">
+            {[0.25, 0.50, 0.75, 1.0].map((pct) => (
+              <button
+                key={pct}
+                type="button"
+                onClick={() => handlePercentageSelect(pct)}
+                className="flex-1 py-1.5 bg-[#1E293B] hover:bg-[#38BDF8] hover:text-[#080C14] text-[#F8FAFC] text-xs font-mono font-semibold rounded border border-[#1E293B] transition-colors"
+              >
+                {pct * 100}%
+              </button>
+            ))}
           </div>
         )}
 
-        <div className="text-sm text-muted-foreground">
-          Balance: {balance ? `${formatUnits(balance)} SUSD` : "Loading..."}
+        <Separator className="bg-[#1E293B]" />
+
+        {/* Execution Details Summary */}
+        <div className="bg-[#080C14] p-4 rounded-lg border border-[#1E293B] space-y-2 text-xs text-[#94A3B8]">
+          <div className="flex justify-between">
+            <span>Execution Price</span>
+            <span className="font-mono font-semibold text-[#F8FAFC]">{typeof price === "bigint" ? `${formatPrice(price)} SUSD` : "—"}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Estimated Received</span>
+            <span className="font-mono font-semibold text-[#38BDF8]">
+              {isBuy ? `${estimatedOut.toFixed(4)} shares` : `${estimatedOut.toFixed(2)} SUSD`}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>Slippage Tolerance</span>
+            <span className="font-mono text-[#F8FAFC]">0.5% (Algorithmic)</span>
+          </div>
         </div>
 
-        <Button
-          onClick={handleTrade}
-          disabled={isTradePending || !isConnected || !price || (isBuy && (!cashAmount || Number(cashAmount) <= 0)) || (!isBuy && (!shareAmount || Number(shareAmount) <= 0))}
-          className="w-full"
-        >
-          {isTradePending ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              Confirming...
-            </>
-          ) : (
-            isBuy ? "Buy" : "Sell"
-          )}
-        </Button>
+        {/* Action Button */}
+        {needsApproval ? (
+          <Button
+            onClick={handleApprove}
+            disabled={isTradePending || !isConnected}
+            className="w-full h-12 bg-[#0F172A] text-[#38BDF8] hover:bg-[#38BDF8]/10 text-base font-semibold border border-[#38BDF8]"
+          >
+            {isTradePending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Approving SUSD...
+              </>
+            ) : (
+              `Step 1: Approve SUSD Allowance`
+            )}
+          </Button>
+        ) : (
+          <Button
+            onClick={handleTrade}
+            disabled={isTradePending || !isConnected || !price || (isBuy && (!cashAmount || Number(cashAmount) <= 0)) || (!isBuy && (!shareAmount || Number(shareAmount) <= 0))}
+            className={`w-full h-12 text-base font-semibold border ${
+              isBuy
+                ? "bg-[#22C55E] text-[#080C14] hover:bg-[#16a34a] border-[#22C55E]"
+                : "bg-[#EF4444] text-[#F8FAFC] hover:bg-[#dc2626] border-[#EF4444]"
+            }`}
+          >
+            {isTradePending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Confirming Transaction...
+              </>
+            ) : (
+              isBuy ? `Execute Buy Order (${ticker})` : `Execute Sell Order (${ticker})`
+            )}
+          </Button>
+        )}
 
         {!isConnected && (
-          <p className="text-sm text-center text-muted-foreground">
-            Connect wallet to trade
+          <p className="text-xs text-center text-[#94A3B8]">
+            Connect wallet to initiate order execution
           </p>
         )}
       </CardContent>

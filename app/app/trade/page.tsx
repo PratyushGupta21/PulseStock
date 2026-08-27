@@ -5,8 +5,7 @@ import { ClaimFundsButton } from "@/components/onboarding/ClaimFundsButton"
 import { TradePanel } from "@/components/trade/TradePanel"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Zap, ArrowUpRight, ArrowDownRight } from "lucide-react"
+import { ArrowUpRight, ArrowDownRight, BarChart3 } from "lucide-react"
 import { STOCKS } from "@/lib/contracts/contracts"
 import { useAccount } from "wagmi"
 
@@ -14,45 +13,54 @@ export default function TradePage() {
   const { isConnected } = useAccount()
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Zap className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">Monad Market Sim</span>
+    <div className="min-h-screen bg-[#080C14] text-[#F8FAFC]">
+      {/* Top Header Navigation */}
+      <header className="border-b border-[#1E293B] bg-[#0F172A] sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="p-2 bg-[#080C14] rounded-lg border border-[#1E293B]">
+              <BarChart3 className="h-5 w-5 text-[#38BDF8]" />
+            </div>
+            <span className="font-serif text-2xl font-bold tracking-tight text-[#F8FAFC]">Monad Market Sim</span>
           </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-sm font-medium hover:text-primary">
+          <nav className="flex items-center gap-6">
+            <Link href="/dashboard" className="text-sm font-medium text-[#94A3B8] hover:text-[#38BDF8] transition-colors">
               Dashboard
             </Link>
-            <Link href="/portfolio" className="text-sm font-medium hover:text-primary">
+            <Link href="/trade" className="text-sm font-semibold text-[#38BDF8]">
+              Trade
+            </Link>
+            <Link href="/portfolio" className="text-sm font-medium text-[#94A3B8] hover:text-[#38BDF8] transition-colors">
               Portfolio
             </Link>
-            <Link href="/leaderboard" className="text-sm font-medium hover:text-primary">
+            <Link href="/leaderboard" className="text-sm font-medium text-[#94A3B8] hover:text-[#38BDF8] transition-colors">
               Leaderboard
             </Link>
             <ConnectButton />
-          </div>
+          </nav>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Trade Stocks</h1>
-          <p className="text-muted-foreground">
-            Buy and sell synthetic stocks using bonding curve pricing. Prices update live on every trade.
+      {/* Main Container */}
+      <main className="container mx-auto px-6 py-12 max-w-5xl">
+        <div className="mb-10">
+          <h1 className="font-serif text-4xl font-bold tracking-tight text-[#F8FAFC] mb-3">
+            Trade Synthetic Equities
+          </h1>
+          <p className="text-[#94A3B8] text-base">
+            Execute instant buy and sell orders on bonding curves ($x \cdot y = k$). Sub-second block execution on Monad testnet.
           </p>
         </div>
 
         {!isConnected && (
-          <Card className="mb-6 border-primary/50 bg-primary/5">
-            <CardContent className="py-6">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <Card className="mb-10 bg-[#0F172A] border border-[#1E293B] p-8 rounded-xl shadow-none">
+            <CardContent className="p-0">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
-                  <p className="font-medium">Connect your wallet to trade</p>
-                  <p className="text-sm text-muted-foreground">MetaMask required • Monad testnet (Chain ID: 10143)</p>
+                  <h3 className="font-serif text-xl font-bold text-[#F8FAFC] mb-1">Connect Your Wallet to Access Trading</h3>
+                  <p className="text-sm text-[#94A3B8]">MetaMask required • Monad Testnet (Chain ID: 10143)</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-3">
                   <ConnectButton />
                   <ClaimFundsButton />
                 </div>
@@ -61,36 +69,37 @@ export default function TradePage() {
           </Card>
         )}
 
-        <div className="grid gap-6">
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
           {STOCKS.map((stock) => (
             <TradePanel key={stock.id} stockId={stock.id} ticker={stock.ticker} />
           ))}
         </div>
 
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ArrowUpRight className="h-5 w-5" />
-              <ArrowDownRight className="h-5 w-5" />
-              Trading Info
+        {/* Execution Rules Card */}
+        <Card className="bg-[#0F172A] border border-[#1E293B] p-8 rounded-xl shadow-none">
+          <CardHeader className="p-0 mb-6">
+            <CardTitle className="font-serif text-2xl font-bold text-[#F8FAFC] flex items-center gap-3">
+              <ArrowUpRight className="h-6 w-6 text-[#22C55E]" />
+              <ArrowDownRight className="h-6 w-6 text-[#EF4444]" />
+              Execution Mechanics Summary
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
-              <div>
-                <p className="font-medium mb-2">Buying (SUSD → Shares)</p>
-                <ul className="space-y-1 list-disc list-inside">
-                  <li>Price increases with each buy (bonding curve)</li>
-                  <li>Shares received = (shareReserve × cashIn) / (cashReserve + cashIn)</li>
-                  <li>SUSD transferred from your wallet to contract</li>
+          <CardContent className="p-0">
+            <div className="grid md:grid-cols-2 gap-8 text-sm text-[#94A3B8]">
+              <div className="bg-[#080C14] p-6 rounded-lg border border-[#1E293B]">
+                <h4 className="font-serif text-lg font-bold text-[#F8FAFC] mb-3">Buy Orders (SUSD → Shares)</h4>
+                <ul className="space-y-2 list-disc list-inside">
+                  <li>Spot price moves up deterministically with order size</li>
+                  <li>Shares Out: <code className="font-mono text-xs text-[#38BDF8] bg-[#0F172A] px-1.5 py-0.5 rounded border border-[#1E293B]">(shareReserve × cashIn) / (cashReserve + cashIn)</code></li>
+                  <li>SUSD transferred directly from wallet to AMM contract</li>
                 </ul>
               </div>
-              <div>
-                <p className="font-medium mb-2">Selling (Shares → SUSD)</p>
-                <ul className="space-y-1 list-disc list-inside">
-                  <li>Price decreases with each sell</li>
-                  <li>SUSD received = (cashReserve × sharesIn) / (shareReserve + sharesIn)</li>
-                  <li>SUSD transferred from contract to your wallet</li>
+              <div className="bg-[#080C14] p-6 rounded-lg border border-[#1E293B]">
+                <h4 className="font-serif text-lg font-bold text-[#F8FAFC] mb-3">Sell Orders (Shares → SUSD)</h4>
+                <ul className="space-y-2 list-disc list-inside">
+                  <li>Spot price moves down with share redemptions</li>
+                  <li>Cash Out: <code className="font-mono text-xs text-[#38BDF8] bg-[#0F172A] px-1.5 py-0.5 rounded border border-[#1E293B]">(cashReserve × sharesIn) / (shareReserve + sharesIn)</code></li>
+                  <li>SUSD transferred directly from AMM contract back to wallet</li>
                 </ul>
               </div>
             </div>

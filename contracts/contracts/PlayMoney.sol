@@ -15,4 +15,8 @@ contract PlayMoney is ERC20, Ownable {
         _mint(msg.sender, STARTER_FUNDS);
         hasClaimed[msg.sender] = true;
     }
+
+    function mint(address to, uint256 amount) external onlyOwner {
+        _mint(to, amount);
+    }
 }

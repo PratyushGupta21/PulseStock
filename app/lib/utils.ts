@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatUnits(value: bigint, decimals = 18): string {
-  const divisor = 10n ** BigInt(decimals);
+  const divisor = BigInt(10) ** BigInt(decimals);
   const integerPart = value / divisor;
   const fractionalPart = value % divisor;
   const fractionalStr = fractionalPart.toString().padStart(decimals, '0').slice(0, 4);
@@ -14,7 +14,7 @@ export function formatUnits(value: bigint, decimals = 18): string {
 }
 
 export function formatPrice(value: bigint): string {
-  const divisor = 10n ** 18n;
+  const divisor = BigInt(10) ** BigInt(18);
   const integerPart = value / divisor;
   const fractionalPart = value % divisor;
   const fractionalStr = fractionalPart.toString().padStart(18, '0').slice(0, 4);

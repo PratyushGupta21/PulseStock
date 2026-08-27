@@ -2,15 +2,20 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract StockAMM is Ownable {
+    using SafeERC20 for IERC20;
+
     enum Stock { MNDX, CHAI, VIBE, GRIT, TECH }
 
-    string[5] public constant TICKERS = ["MNDX", "CHAI", "VIBE", "GRIT", "TECH"];
+    string[5] public TICKERS;
 
     uint256[5] public cashReserve;
     uint256[5] public shareReserve;
+
+    mapping(address => mapping(uint8 => uint256)) public userShares;
 
     IERC20 public immutable playMoney;
 
@@ -25,6 +30,11 @@ contract StockAMM is Ownable {
 
     constructor(address _playMoney, uint256 initialLiquidity) Ownable(msg.sender) {
         playMoney = IERC20(_playMoney);
+        TICKERS[0] = "MNDX";
+        TICKERS[1] = "CHAI";
+        TICKERS[2] = "VIBE";
+        TICKERS[3] = "GRIT";
+        TICKERS[4] = "TECH";
         for (uint8 i = 0; i < 5; i++) {
             cashReserve[i] = initialLiquidity;
             shareReserve[i] = initialLiquidity;
@@ -43,6 +53,7 @@ contract StockAMM is Ownable {
 
         cashReserve[stockId] += cashAmount;
         shareReserve[stockId] -= sharesOut;
+        userShares[msg.sender][stockId] += sharesOut;
 
         uint256 newPrice = getPrice(stockId);
 
@@ -52,12 +63,14 @@ contract StockAMM is Ownable {
     function sell(uint8 stockId, uint256 shareAmount) external {
         require(shareAmount > 0, "Zero amount");
         require(stockId < 5, "Invalid stock");
+        require(userShares[msg.sender][stockId] >= shareAmount, "Insufficient share balance");
         require(shareAmount <= shareReserve[stockId], "Insufficient shares in reserve");
 
         uint256 cashOut = (cashReserve[stockId] * shareAmount) / (shareReserve[stockId] + shareAmount);
         require(cashOut > 0, "No cash received");
         require(cashOut <= cashReserve[stockId], "Insufficient liquidity");
 
+        userShares[msg.sender][stockId] -= shareAmount;
         shareReserve[stockId] += shareAmount;
         cashReserve[stockId] -= cashOut;
 
@@ -68,13 +81,18 @@ contract StockAMM is Ownable {
         emit Trade(msg.sender, stockId, false, shareAmount, cashOut, newPrice);
     }
 
-    function getPrice(uint8 stockId) external view returns (uint256) {
+    function getUserShares(address user, uint8 stockId) external view returns (uint256) {
+        require(stockId < 5, "Invalid stock");
+        return userShares[user][stockId];
+    }
+
+    function getPrice(uint8 stockId) public view returns (uint256) {
         require(stockId < 5, "Invalid stock");
         if (shareReserve[stockId] == 0) return 0;
         return (cashReserve[stockId] * 10 ** 18) / shareReserve[stockId];
     }
 
-    function getTicker(uint8 stockId) external pure returns (string memory) {
+    function getTicker(uint8 stockId) external view returns (string memory) {
         require(stockId < 5, "Invalid stock");
         return TICKERS[stockId];
     }
