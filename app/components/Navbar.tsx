@@ -2,8 +2,15 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Instrument_Serif } from "next/font/google"
 import { ConnectButton } from "@/components/wallet/ConnectButton"
 import { Zap, LayoutDashboard, Wallet, Trophy } from "lucide-react"
+
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
+  style: "italic",
+  subsets: ["latin"],
+})
 
 export function Navbar() {
   const pathname = usePathname()
@@ -16,15 +23,14 @@ export function Navbar() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#000000]/60 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#000000]/80 backdrop-blur-md">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5 group">
+        <Link href="/" className="flex items-center gap-2 text-xl tracking-tight group">
           <div className="p-1.5 bg-white/10 rounded-lg text-white group-hover:scale-105 transition-transform border border-white/20">
             <Zap className="h-5 w-5 fill-current" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-white font-serif">
-            Monad Market Sim
-          </span>
+          <span className="font-sans font-bold text-white text-xl">Pulse</span>
+          <span className={`${instrumentSerif.className} italic text-zinc-400 font-normal text-2xl -ml-1`}>Stock</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-lg border border-white/10 bg-black/40 backdrop-blur-sm">
@@ -55,7 +61,7 @@ export function Navbar() {
       </div>
 
       {/* Mobile nav bar row */}
-      <div className="flex md:hidden border-t border-white/10 px-2 py-1.5 justify-around bg-black/60 backdrop-blur-md">
+      <div className="flex md:hidden border-t border-white/10 px-2 py-1.5 justify-around bg-black/80 backdrop-blur-md">
         {navLinks.map((link) => {
           const Icon = link.icon
           const isActive = pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href))
@@ -71,7 +77,7 @@ export function Navbar() {
               <Icon className="h-4 w-4" />
               {link.label}
             </Link>
-          );
+          )
         })}
       </div>
     </header>

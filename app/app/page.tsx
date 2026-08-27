@@ -1,10 +1,18 @@
 "use client"
 
 import Link from "next/link"
+import { Instrument_Serif } from "next/font/google"
 import { Navbar } from "@/components/Navbar"
+import { Footer } from "@/components/Footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Wallet, Zap, TrendingUp, Anchor, Activity, ArrowRight, ShieldCheck } from "lucide-react"
+
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
+  style: "italic",
+  subsets: ["latin"],
+})
 
 export default function HomePage() {
   return (
@@ -34,9 +42,9 @@ export default function HomePage() {
         {/* Hero Section */}
         <main className="container mx-auto px-6 py-20">
           <section className="text-center max-w-4xl mx-auto mb-16">
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 text-[#F8FAFC] leading-tight drop-shadow-md">
+            <h1 className="font-sans text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 text-[#FFFFFF] leading-tight drop-shadow-md antialiased">
               Trade Real Stocks with <br className="hidden sm:inline" />
-              <span className="text-[#9a9a9a]">On-Chain Bonding Curves</span>
+              On-Chain <em className={`${instrumentSerif.className} not-italic text-[#9a9a9a] text-[1.08em] font-normal`}>Bonding Curves</em>
             </h1>
 
             <p className="text-lg md:text-xl text-[#9a9a9a] mb-10 leading-relaxed max-w-2xl mx-auto drop-shadow-sm font-medium">
@@ -146,12 +154,7 @@ export default function HomePage() {
           </section>
         </main>
 
-        {/* Footer */}
-        <footer className="border-t border-white/10 bg-black/80 backdrop-blur-md py-8">
-          <div className="container mx-auto px-6 text-center text-sm text-[#9a9a9a]">
-            <p className="font-mono">Built for Monad Blitz Hackathon • Real Equity Anchors • Institutional Terminal Architecture</p>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </div>
   )
