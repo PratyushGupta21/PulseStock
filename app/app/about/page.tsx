@@ -55,14 +55,18 @@ export default function AboutPage() {
           <p className="text-[#9a9a9a] text-sm leading-relaxed mb-6">
             PulseStock was built by a focused engineering team for the Monad Blitz Hackathon, combining expertise in smart contract development, DeFi protocol design, and institutional-grade frontend engineering.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-black rounded-lg border border-white/10 p-5">
-              <p className="text-white font-semibold text-sm mb-1">Maanas Verma</p>
-              <p className="text-[#9a9a9a] text-xs">Full-Stack & Smart Contract Developer</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="bg-black/60 border border-white/10 rounded-xl p-5 hover:border-white/30 transition-all duration-300">
+              <p className="text-white font-semibold text-base mb-1">Maanas Verma</p>
+              <p className="text-zinc-400 text-sm">Full-Stack & Smart Contract Developer</p>
             </div>
-            <div className="bg-black rounded-lg border border-white/10 p-5">
-              <p className="text-white font-semibold text-sm mb-1">Core Contributors</p>
-              <p className="text-[#9a9a9a] text-xs">Hackathon team — DeFi protocol design & frontend engineering</p>
+            <div className="bg-black/60 border border-white/10 rounded-xl p-5 hover:border-white/30 transition-all duration-300">
+              <p className="text-white font-semibold text-base mb-1">Pratyush Gupta</p>
+              <p className="text-zinc-400 text-sm">Frontend Developer</p>
+            </div>
+            <div className="bg-black/60 border border-white/10 rounded-xl p-5 hover:border-white/30 transition-all duration-300">
+              <p className="text-white font-semibold text-base mb-1">Core Contributors</p>
+              <p className="text-zinc-400 text-sm">Hackathon team — DeFi protocol design & frontend engineering</p>
             </div>
           </div>
         </div>
