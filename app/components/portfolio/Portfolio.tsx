@@ -18,6 +18,14 @@ export function Portfolio() {
   })
 
   const holdings = STOCKS.map((stock) => {
+    const { data: stockData } = useReadContract({
+      address: STOCK_AMM_ADDRESS,
+      abi: stockAmmAbi,
+      functionName: "getStock",
+      args: [BigInt(stock.id)],
+      query: { refetchInterval: 3000 },
+    })
+
     const { data: price } = useReadContract({
       address: STOCK_AMM_ADDRESS,
       abi: stockAmmAbi,
@@ -34,11 +42,15 @@ export function Portfolio() {
       query: { enabled: !!address, refetchInterval: 3000 },
     })
 
+    const displayTicker = stockData?.[0] || stock.ticker
+    const displayName = stockData?.[1] || stock.name
+    const basePrice = stockData?.[4] ? Number(stockData[4]) / 1e18 : 0
+
     const numShares = typeof shares === "bigint" ? Number(shares) / 1e18 : 0
-    const numPrice = typeof price === "bigint" ? Number(price) / 1e18 : stock.defaultBasePrice
+    const numPrice = typeof price === "bigint" ? Number(price) / 1e18 : (stockData?.[6] ? Number(stockData[6]) / 1e18 : basePrice)
     const value = numShares * numPrice
 
-    return { stock, price, shares, numShares, numPrice, value }
+    return { stock, displayTicker, displayName, basePrice, price, shares, numShares, numPrice, value }
   })
 
   const totalPositionsValue = holdings.reduce((acc, h) => acc + h.value, 0)
@@ -88,13 +100,13 @@ export function Portfolio() {
             </TableRow>
           </TableHeader>
           <TableBody className="bg-[#0F172A] divide-y divide-[#1E293B]">
-            {holdings.map(({ stock, price, shares, numShares, value }) => (
+            {holdings.map(({ stock, displayTicker, displayName, basePrice, price, shares, value }) => (
               <TableRow key={stock.id} className="hover:bg-[#1E293B]/50 border-b border-[#1E293B]">
-                <TableCell className="font-serif font-bold text-[#F8FAFC] text-base">{stock.ticker}</TableCell>
-                <TableCell className="text-[#94A3B8] text-sm">{stock.name}</TableCell>
-                <TableCell className="text-right font-mono text-[#94A3B8]">${stock.defaultBasePrice.toFixed(2)}</TableCell>
+                <TableCell className="font-serif font-bold text-[#F8FAFC] text-base">{displayTicker}</TableCell>
+                <TableCell className="text-[#94A3B8] text-sm">{displayName}</TableCell>
+                <TableCell className="text-right font-mono text-[#94A3B8]">${basePrice > 0 ? basePrice.toFixed(2) : "..."}</TableCell>
                 <TableCell className="text-right font-mono text-[#38BDF8]">
-                  {typeof price === "bigint" ? `${formatPrice(price)} SUSD` : `$${stock.defaultBasePrice.toFixed(2)}`}
+                  {typeof price === "bigint" ? `${formatPrice(price)} SUSD` : (basePrice > 0 ? `$${basePrice.toFixed(2)}` : "...")}
                 </TableCell>
                 <TableCell className="text-right font-mono text-[#94A3B8]">
                   {typeof shares === "bigint" ? `${(Number(shares) / 1e18).toFixed(4)}` : "0.0000"}
