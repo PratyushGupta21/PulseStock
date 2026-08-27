@@ -59,29 +59,29 @@ export function Portfolio() {
 
   if (!isConnected) {
     return (
-      <Card className="bg-[#0F172A] border border-[#1E293B] p-8 rounded-xl shadow-none">
+      <Card className="bg-black/80 backdrop-blur-sm border border-white/10 p-8 rounded-xl shadow-md">
         <CardContent className="p-0 text-center">
-          <p className="text-[#94A3B8]">Connect wallet to view portfolio valuation</p>
+          <p className="text-[#9a9a9a]">Connect wallet to view portfolio valuation</p>
         </CardContent>
       </Card>
     )
   }
 
   return (
-    <Card className="bg-[#0F172A] border border-[#1E293B] p-8 rounded-xl shadow-none">
+    <Card className="bg-black/80 backdrop-blur-sm border border-white/10 p-8 rounded-xl shadow-md">
       <CardHeader className="p-0 mb-6">
-        <CardTitle className="font-serif text-2xl font-bold text-[#F8FAFC]">Asset Holdings & Valuation</CardTitle>
+        <CardTitle className="font-serif text-2xl font-bold text-white">Asset Holdings & Valuation</CardTitle>
       </CardHeader>
       <CardContent className="p-0 space-y-6">
-        <div className="grid sm:grid-cols-2 gap-4 bg-[#080C14] p-6 rounded-lg border border-[#1E293B]">
+        <div className="grid sm:grid-cols-2 gap-4 bg-black p-6 rounded-lg border border-white/10">
           <div>
-            <div className="text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">Total Net Portfolio Value</div>
-            <div className="font-serif text-3xl font-bold text-[#38BDF8]">
+            <div className="text-xs font-mono text-[#9a9a9a] uppercase tracking-wider mb-1">Total Net Portfolio Value</div>
+            <div className="font-serif text-3xl font-bold text-white">
               ${totalValue.toFixed(2)} SUSD
             </div>
           </div>
           <div>
-            <div className="text-xs font-mono text-[#94A3B8] uppercase tracking-wider mb-1">Liquid Cash Balance</div>
+            <div className="text-xs font-mono text-[#9a9a9a] uppercase tracking-wider mb-1">Liquid Cash Balance</div>
             <div className="font-mono text-2xl font-semibold text-[#22C55E]">
               {typeof cashBalance === "bigint" ? `${formatUnits(cashBalance)} SUSD` : "0.0000 SUSD"}
             </div>
@@ -90,28 +90,28 @@ export function Portfolio() {
 
         <Table>
           <TableHeader>
-            <TableRow className="bg-[#080C14] border-b border-[#1E293B]">
-              <TableHead className="text-[#94A3B8] font-mono text-xs uppercase font-semibold">Ticker</TableHead>
-              <TableHead className="text-[#94A3B8] font-mono text-xs uppercase font-semibold">Company</TableHead>
-              <TableHead className="text-right text-[#94A3B8] font-mono text-xs uppercase font-semibold">24h Anchor</TableHead>
-              <TableHead className="text-right text-[#94A3B8] font-mono text-xs uppercase font-semibold">Spot Price</TableHead>
-              <TableHead className="text-right text-[#94A3B8] font-mono text-xs uppercase font-semibold">Held Quantity</TableHead>
-              <TableHead className="text-right text-[#94A3B8] font-mono text-xs uppercase font-semibold">Position Value</TableHead>
+            <TableRow className="bg-black border-b border-white/10">
+              <TableHead className="text-[#9a9a9a] font-mono text-xs uppercase font-semibold">Ticker</TableHead>
+              <TableHead className="text-[#9a9a9a] font-mono text-xs uppercase font-semibold">Company</TableHead>
+              <TableHead className="text-right text-[#9a9a9a] font-mono text-xs uppercase font-semibold">24h Anchor</TableHead>
+              <TableHead className="text-right text-[#9a9a9a] font-mono text-xs uppercase font-semibold">Spot Price</TableHead>
+              <TableHead className="text-right text-[#9a9a9a] font-mono text-xs uppercase font-semibold">Held Quantity</TableHead>
+              <TableHead className="text-right text-[#9a9a9a] font-mono text-xs uppercase font-semibold">Position Value</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#0F172A] divide-y divide-[#1E293B]">
+          <TableBody className="bg-zinc-950/40 divide-y divide-white/10">
             {holdings.map(({ stock, displayTicker, displayName, basePrice, price, shares, value }) => (
-              <TableRow key={stock.id} className="hover:bg-[#1E293B]/50 border-b border-[#1E293B]">
-                <TableCell className="font-serif font-bold text-[#F8FAFC] text-base">{displayTicker}</TableCell>
-                <TableCell className="text-[#94A3B8] text-sm">{displayName}</TableCell>
-                <TableCell className="text-right font-mono text-[#94A3B8]">${basePrice > 0 ? basePrice.toFixed(2) : "..."}</TableCell>
-                <TableCell className="text-right font-mono text-[#38BDF8]">
+              <TableRow key={stock.id} className="hover:bg-zinc-900/40 border-b border-white/10 transition-colors">
+                <TableCell className="font-serif font-bold text-white text-base">{displayTicker}</TableCell>
+                <TableCell className="text-[#9a9a9a] text-sm">{displayName}</TableCell>
+                <TableCell className="text-right font-mono text-[#9a9a9a]">${basePrice > 0 ? basePrice.toFixed(2) : "..."}</TableCell>
+                <TableCell className="text-right font-mono text-white font-semibold">
                   {typeof price === "bigint" ? `${formatPrice(price)} SUSD` : (basePrice > 0 ? `$${basePrice.toFixed(2)}` : "...")}
                 </TableCell>
-                <TableCell className="text-right font-mono text-[#94A3B8]">
+                <TableCell className="text-right font-mono text-[#9a9a9a]">
                   {typeof shares === "bigint" ? `${(Number(shares) / 1e18).toFixed(4)}` : "0.0000"}
                 </TableCell>
-                <TableCell className="text-right font-mono font-semibold text-[#F8FAFC]">
+                <TableCell className="text-right font-mono font-semibold text-white">
                   ${value.toFixed(2)} SUSD
                 </TableCell>
               </TableRow>
@@ -119,7 +119,7 @@ export function Portfolio() {
           </TableBody>
         </Table>
 
-        <p className="text-xs font-mono text-[#94A3B8]">
+        <p className="text-xs font-mono text-[#9a9a9a]">
           * Live share balances updated via on-chain StockAMM.getUserShares queries on Monad Testnet.
         </p>
       </CardContent>

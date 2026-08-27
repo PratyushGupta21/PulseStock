@@ -16,18 +16,18 @@ export function Navbar() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#000000]/60 backdrop-blur-md">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="p-1.5 bg-primary rounded-lg text-primary-foreground group-hover:scale-105 transition-transform">
+          <div className="p-1.5 bg-white/10 rounded-lg text-white group-hover:scale-105 transition-transform border border-white/20">
             <Zap className="h-5 w-5 fill-current" />
           </div>
-          <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
+          <span className="text-xl font-bold tracking-tight text-white font-serif">
             Monad Market Sim
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1 bg-muted/50 p-1 rounded-xl border">
+        <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-lg border border-white/10 bg-black/40 backdrop-blur-sm">
           {navLinks.map((link) => {
             const Icon = link.icon
             const isActive = pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href))
@@ -36,13 +36,13 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                   isActive
-                    ? "bg-background text-primary shadow-sm font-semibold"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                    ? "border border-white/20 bg-gradient-to-r from-[#050505] via-[#2a2a2a] to-[#4a4a4a] text-white shadow-inner font-semibold"
+                    : "text-[#9a9a9a] hover:text-white hover:border hover:border-white/10 hover:bg-white/5"
                 }`}
               >
-                <Icon className={`h-4 w-4 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+                <Icon className={`h-4 w-4 ${isActive ? "text-white" : "text-[#9a9a9a]"}`} />
                 {link.label}
               </Link>
             )
@@ -55,7 +55,7 @@ export function Navbar() {
       </div>
 
       {/* Mobile nav bar row */}
-      <div className="flex md:hidden border-t px-2 py-1.5 justify-around bg-muted/30">
+      <div className="flex md:hidden border-t border-white/10 px-2 py-1.5 justify-around bg-black/60 backdrop-blur-md">
         {navLinks.map((link) => {
           const Icon = link.icon
           const isActive = pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href))
@@ -65,13 +65,13 @@ export function Navbar() {
               key={link.href}
               href={link.href}
               className={`flex flex-col items-center gap-0.5 px-2 py-1 text-xs transition-all ${
-                isActive ? "text-primary font-bold" : "text-muted-foreground"
+                isActive ? "text-white font-bold" : "text-[#9a9a9a]"
               }`}
             >
               <Icon className="h-4 w-4" />
               {link.label}
             </Link>
-          )
+          );
         })}
       </div>
     </header>

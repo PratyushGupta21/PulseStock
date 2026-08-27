@@ -1,12 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useWatchContractEvent } from "wagmi"
+import { useWatchContractEvent, useReadContract } from "wagmi"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { Trophy, TrendingUp } from "lucide-react"
 import { STOCK_AMM_ADDRESS, stockAmmAbi } from "@/lib/contracts/contracts"
-import { useReadContract } from "wagmi"
 
 interface PortfolioData {
   address: string
@@ -74,41 +73,41 @@ export function Leaderboard() {
   const sorted = [...portfolios].sort((a, b) => b.totalValue - a.totalValue)
 
   return (
-    <Card className="bg-[#0F172A] border border-[#1E293B] p-8 rounded-xl shadow-none">
+    <Card className="bg-black/80 backdrop-blur-sm border border-white/10 p-8 rounded-xl shadow-md">
       <CardHeader className="p-0 mb-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="font-serif text-2xl font-bold text-[#F8FAFC] flex items-center gap-3">
-            <Trophy className="h-6 w-6 text-[#38BDF8]" />
+          <CardTitle className="font-serif text-2xl font-bold text-white flex items-center gap-3">
+            <Trophy className="h-6 w-6 text-white" />
             Trader Leaderboard & Ranking
           </CardTitle>
-          <span className="text-xs font-mono text-[#38BDF8] px-3 py-1 rounded bg-[#080C14] border border-[#1E293B]">
+          <span className="text-xs font-mono text-[#9a9a9a] px-3 py-1 rounded bg-black border border-white/10">
             Live Feed: {lastUpdate.toLocaleTimeString()}
           </span>
         </div>
       </CardHeader>
       <CardContent className="p-0">
         {sorted.length === 0 ? (
-          <div className="bg-[#080C14] p-12 text-center rounded-lg border border-[#1E293B] text-[#94A3B8]">
-            <p className="font-serif text-lg font-semibold text-[#F8FAFC] mb-1">No Trade Events Recorded Yet</p>
+          <div className="bg-black p-12 text-center rounded-lg border border-white/10 text-[#9a9a9a]">
+            <p className="font-serif text-lg font-semibold text-white mb-1">No Trade Events Recorded Yet</p>
             <p className="text-sm">Initiate a buy or sell order on the Trade tab to rank on the global leaderboard.</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow className="bg-[#080C14] border-b border-[#1E293B]">
-                <TableHead className="text-[#94A3B8] font-mono text-xs uppercase font-semibold w-24">Rank</TableHead>
-                <TableHead className="text-[#94A3B8] font-mono text-xs uppercase font-semibold">Wallet Address</TableHead>
-                <TableHead className="text-right text-[#94A3B8] font-mono text-xs uppercase font-semibold">Net Portfolio Value</TableHead>
+              <TableRow className="bg-black border-b border-white/10">
+                <TableHead className="text-[#9a9a9a] font-mono text-xs uppercase font-semibold w-24">Rank</TableHead>
+                <TableHead className="text-[#9a9a9a] font-mono text-xs uppercase font-semibold">Wallet Address</TableHead>
+                <TableHead className="text-right text-[#9a9a9a] font-mono text-xs uppercase font-semibold">Net Portfolio Value</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className="bg-[#0F172A] divide-y divide-[#1E293B]">
+            <TableBody className="bg-zinc-950/40 divide-y divide-white/10">
               {sorted.slice(0, 10).map((p, i) => (
-                <TableRow key={p.address} className="hover:bg-[#1E293B]/50 border-b border-[#1E293B]">
-                  <TableCell className="font-serif font-bold text-[#F8FAFC] text-base">
-                    {i === 0 && <Trophy className="h-4 w-4 text-[#38BDF8] inline mr-2" />}
+                <TableRow key={p.address} className="hover:bg-zinc-900/40 border-b border-white/10 transition-colors">
+                  <TableCell className="font-serif font-bold text-white text-base">
+                    {i === 0 && <Trophy className="h-4 w-4 text-white inline mr-2" />}
                     #{i + 1}
                   </TableCell>
-                  <TableCell className="font-mono text-sm text-[#F8FAFC]">
+                  <TableCell className="font-mono text-sm text-white">
                     {p.address.slice(0, 8)}...{p.address.slice(-6)}
                   </TableCell>
                   <TableCell className="text-right font-mono font-bold text-[#22C55E]">

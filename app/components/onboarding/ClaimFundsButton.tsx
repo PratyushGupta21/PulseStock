@@ -45,7 +45,7 @@ export function ClaimFundsButton() {
 
   if (!mounted || !isConnected) {
     return (
-      <Button disabled variant="secondary" className="gap-2 bg-[#0F172A] text-[#94A3B8] border border-[#1E293B]">
+      <Button disabled variant="secondary" className="gap-2 bg-black/60 text-[#9a9a9a] border border-white/10 opacity-50">
         Connect Wallet First
       </Button>
     )
@@ -53,8 +53,8 @@ export function ClaimFundsButton() {
 
   if (hasClaimed) {
     return (
-      <Button variant="secondary" disabled className="gap-2 bg-[#080C14] text-[#22C55E] border border-[#22C55E]/40 font-mono">
-        <CheckCircle2 className="h-4 w-4 text-[#22C55E]" />
+      <Button variant="secondary" disabled className="gap-2 bg-emerald-950/40 text-emerald-400 border border-emerald-500/20 font-mono">
+        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
         100,000 SUSD Claimed
       </Button>
     )
@@ -62,8 +62,8 @@ export function ClaimFundsButton() {
 
   if (isPending || isConfirming) {
     return (
-      <Button disabled className="gap-2 bg-[#1E293B] text-[#38BDF8] border border-[#38BDF8]/40">
-        <Loader2 className="h-4 w-4 animate-spin text-[#38BDF8]" />
+      <Button disabled className="gap-2 bg-white/10 text-white border border-white/20">
+        <Loader2 className="h-4 w-4 animate-spin text-white" />
         Claiming Faucet...
       </Button>
     )
@@ -72,15 +72,15 @@ export function ClaimFundsButton() {
   if (isSuccess) {
     toast.success("Starter funds claimed!", { description: "100,000 SUSD minted to your wallet" })
     return (
-      <Button variant="secondary" disabled className="gap-2 bg-[#080C14] text-[#22C55E] border border-[#22C55E]/40 font-mono">
-        <CheckCircle2 className="h-4 w-4 text-[#22C55E]" />
+      <Button variant="secondary" disabled className="gap-2 bg-emerald-950/40 text-emerald-400 border border-emerald-500/20 font-mono">
+        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
         100,000 SUSD Claimed
       </Button>
     )
   }
 
   return (
-    <Button onClick={handleClaim} className="gap-2 bg-[#22C55E] text-[#080C14] hover:bg-[#16a34a] border border-[#22C55E] px-6 py-3 font-semibold">
+    <Button onClick={handleClaim} className="gap-2 bg-gradient-to-b from-white via-zinc-200 to-zinc-400 text-black font-medium border border-white shadow-lg shadow-white/10 hover:opacity-90 transition-opacity px-6 py-3">
       Claim 100,000 SUSD
     </Button>
   )

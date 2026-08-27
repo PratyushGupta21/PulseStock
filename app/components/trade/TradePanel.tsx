@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import { Loader2, ArrowUpRight, ArrowDownRight, Anchor } from "lucide-react"
 import { toast } from "sonner"
 import { STOCK_AMM_ADDRESS, stockAmmAbi, PLAY_MONEY_ADDRESS, playMoneyAbi } from "@/lib/contracts/contracts"
-import { formatUnits, formatPrice } from "@/lib/utils"
+import { formatUnits } from "@/lib/utils"
 
 interface TradePanelProps {
   stockId: number
@@ -145,19 +145,19 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
   }
 
   return (
-    <Card className="w-full bg-[#0F172A] border border-[#1E293B] p-6 md:p-8 rounded-xl shadow-none">
+    <Card className="w-full bg-black/80 backdrop-blur-sm border border-white/10 p-6 md:p-8 rounded-xl shadow-md">
       <CardHeader className="p-0 mb-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="font-serif text-2xl font-bold text-[#F8FAFC] flex items-center gap-2">
+          <CardTitle className="font-serif text-2xl font-bold text-white flex items-center gap-2">
             <span>{ticker}</span>
-            {displayName && <span className="text-xs text-[#94A3B8] font-normal">{displayName}</span>}
+            {displayName && <span className="text-xs text-[#9a9a9a] font-normal">{displayName}</span>}
           </CardTitle>
           <div className="text-right">
-            <span className="text-xs font-mono text-[#38BDF8] font-semibold px-2.5 py-1 rounded bg-[#080C14] border border-[#1E293B] block">
+            <span className="text-xs font-mono text-white font-semibold px-2.5 py-1 rounded bg-black border border-white/10 block">
               Spot: {currentPrice.toFixed(2)} SUSD
             </span>
-            <span className="text-[11px] text-[#94A3B8] font-mono flex items-center justify-end gap-1 mt-1">
-              <Anchor className="h-3 w-3 text-[#38BDF8]" /> Anchor: ${basePrice.toFixed(2)}
+            <span className="text-[11px] text-[#9a9a9a] font-mono flex items-center justify-end gap-1 mt-1">
+              <Anchor className="h-3 w-3 text-white" /> Anchor: ${basePrice.toFixed(2)}
             </span>
           </div>
         </div>
@@ -165,14 +165,14 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
 
       <CardContent className="p-0 space-y-6">
         {/* Buy / Sell Toggle Buttons */}
-        <div className="grid grid-cols-2 gap-2 p-1 bg-[#080C14] rounded-lg border border-[#1E293B]">
+        <div className="grid grid-cols-2 gap-2 p-1 bg-black rounded-lg border border-white/10">
           <button
             type="button"
             onClick={() => setIsBuy(true)}
             className={`flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-semibold transition-all ${
               isBuy
-                ? "bg-[#22C55E] text-[#080C14] shadow-none"
-                : "text-[#94A3B8] hover:text-[#F8FAFC]"
+                ? "bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-md"
+                : "text-[#9a9a9a] hover:text-white"
             }`}
           >
             <ArrowUpRight className="h-4 w-4" />
@@ -183,8 +183,8 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
             onClick={() => setIsBuy(false)}
             className={`flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-semibold transition-all ${
               !isBuy
-                ? "bg-[#EF4444] text-[#F8FAFC] shadow-none"
-                : "text-[#94A3B8] hover:text-[#F8FAFC]"
+                ? "bg-gradient-to-r from-rose-600 to-rose-500 text-white shadow-md"
+                : "text-[#9a9a9a] hover:text-white"
             }`}
           >
             <ArrowDownRight className="h-4 w-4" />
@@ -195,10 +195,10 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
         {/* Input Amount Section */}
         <div className="space-y-3">
           <div className="flex items-center justify-between text-sm">
-            <label className="font-medium text-[#F8FAFC]">
+            <label className="font-medium text-white">
               {isBuy ? "SUSD Order Value" : "Shares Quantity"}
             </label>
-            <span className="font-mono text-xs text-[#94A3B8]">
+            <span className="font-mono text-xs text-[#9a9a9a]">
               Available: {typeof balance === "bigint" ? `${formatUnits(balance)} SUSD` : "0.0000 SUSD"}
             </span>
           </div>
@@ -209,7 +209,7 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
             onChange={(e) => isBuy ? setCashAmount(e.target.value) : setShareAmount(e.target.value)}
             placeholder={isBuy ? "0.00 SUSD" : "0.0000 Shares"}
             disabled={isTradePending || !isConnected}
-            className="bg-[#080C14] border-[#1E293B] text-[#F8FAFC] h-12 font-mono text-base focus-visible:ring-[#38BDF8]"
+            className="bg-[#000000] border-white/20 text-white h-12 font-mono text-base focus-visible:ring-white"
           />
         </div>
 
@@ -221,7 +221,7 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
                 key={pct}
                 type="button"
                 onClick={() => handlePercentageSelect(pct)}
-                className="flex-1 py-1.5 bg-[#1E293B] hover:bg-[#38BDF8] hover:text-[#080C14] text-[#F8FAFC] text-xs font-mono font-semibold rounded border border-[#1E293B] transition-colors"
+                className="flex-1 py-1.5 bg-white/5 hover:bg-white/10 text-white text-xs font-mono font-semibold rounded border border-white/10 transition-colors"
               >
                 {pct * 100}%
               </button>
@@ -229,23 +229,23 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
           </div>
         )}
 
-        <Separator className="bg-[#1E293B]" />
+        <Separator className="bg-white/10" />
 
         {/* Execution Details Summary */}
-        <div className="bg-[#080C14] p-4 rounded-lg border border-[#1E293B] space-y-2 text-xs text-[#94A3B8]">
+        <div className="bg-black p-4 rounded-lg border border-white/10 space-y-2 text-xs text-[#9a9a9a]">
           <div className="flex justify-between">
             <span>Execution Price</span>
-            <span className="font-mono font-semibold text-[#F8FAFC]">${currentPrice.toFixed(2)} SUSD</span>
+            <span className="font-mono font-semibold text-white">${currentPrice.toFixed(2)} SUSD</span>
           </div>
           <div className="flex justify-between">
             <span>Estimated Received</span>
-            <span className="font-mono font-semibold text-[#38BDF8]">
+            <span className="font-mono font-semibold text-white">
               {isBuy ? `${estimatedOut.toFixed(4)} shares` : `$${estimatedOut.toFixed(2)} SUSD`}
             </span>
           </div>
           <div className="flex justify-between">
             <span>Slippage Tolerance</span>
-            <span className="font-mono text-[#F8FAFC]">0.5% (Algorithmic)</span>
+            <span className="font-mono text-white">0.5% (Algorithmic)</span>
           </div>
         </div>
 
@@ -254,7 +254,7 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
           <Button
             onClick={handleApprove}
             disabled={isTradePending || !isConnected}
-            className="w-full h-12 bg-[#0F172A] text-[#38BDF8] hover:bg-[#38BDF8]/10 text-base font-semibold border border-[#38BDF8]"
+            className="w-full h-12 bg-white/10 text-white hover:bg-white/20 text-base font-semibold border border-white/30"
           >
             {isTradePending ? (
               <>
@@ -271,8 +271,8 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
             disabled={isTradePending || !isConnected || (isBuy && (!cashAmount || Number(cashAmount) <= 0)) || (!isBuy && (!shareAmount || Number(shareAmount) <= 0))}
             className={`w-full h-12 text-base font-semibold border ${
               isBuy
-                ? "bg-[#22C55E] text-[#080C14] hover:bg-[#16a34a] border-[#22C55E]"
-                : "bg-[#EF4444] text-[#F8FAFC] hover:bg-[#dc2626] border-[#EF4444]"
+                ? "bg-gradient-to-b from-white via-zinc-200 to-zinc-400 text-black border-white hover:opacity-90 transition-opacity"
+                : "bg-gradient-to-r from-rose-600 to-rose-500 text-white border-rose-400 hover:opacity-90 transition-opacity"
             }`}
           >
             {isTradePending ? (
@@ -287,7 +287,7 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
         )}
 
         {!isConnected && (
-          <p className="text-xs text-center text-[#94A3B8]">
+          <p className="text-xs text-center text-[#9a9a9a]">
             Connect wallet to initiate order execution
           </p>
         )}
