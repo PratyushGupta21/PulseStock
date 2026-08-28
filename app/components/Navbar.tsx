@@ -26,17 +26,22 @@ export function Navbar() {
             const Icon = link.icon
             const isActive = pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href))
 
+            let activeClass = "border border-white/20 bg-gradient-to-r from-[#050505] via-[#2a2a2a] to-[#4a4a4a] text-white shadow-inner font-semibold"
+            if (link.href === "/portfolio" && isActive) {
+              activeClass = "border border-emerald-500/80 bg-emerald-950/50 text-emerald-300 shadow-[0_0_16px_rgba(16,185,129,0.5)] font-semibold"
+            }
+
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                   isActive
-                    ? "border border-white/20 bg-gradient-to-r from-[#050505] via-[#2a2a2a] to-[#4a4a4a] text-white shadow-inner font-semibold"
+                    ? activeClass
                     : "text-[#9a9a9a] hover:text-white hover:border hover:border-white/10 hover:bg-white/5"
                 }`}
               >
-                <Icon className={`h-4 w-4 ${isActive ? "text-white" : "text-[#9a9a9a]"}`} />
+                <Icon className={`h-4 w-4 ${isActive ? (link.href === "/portfolio" ? "text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.8)]" : "text-white") : "text-[#9a9a9a]"}`} />
                 {link.label}
               </Link>
             )

@@ -84,7 +84,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[#9a9a9a] text-xs font-mono">
-            © 2026 PulseStock. All rights reserved.
+            © 2026 Pulse Stock. All rights reserved.
           </p>
           <p className="text-[#9a9a9a] text-xs font-mono">
             Real Equity Anchors • Institutional Terminal Architecture

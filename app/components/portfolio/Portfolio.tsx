@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { formatUnits, formatPrice } from "@/lib/utils"
 import { PLAY_MONEY_ADDRESS, playMoneyAbi, STOCK_AMM_ADDRESS, stockAmmAbi, STOCKS } from "@/lib/contracts/contracts"
+import { Sparkles } from "lucide-react"
 
 export function Portfolio() {
   const { address, isConnected } = useAccount()
@@ -68,7 +69,7 @@ export function Portfolio() {
   }
 
   return (
-    <Card className="bg-zinc-950/80 backdrop-blur-md border border-white/10 p-6 rounded-2xl shadow-2xl">
+    <Card className="bg-zinc-950/80 backdrop-blur-md border border-white/10 p-6 rounded-2xl shadow-2xl relative overflow-hidden">
       <CardHeader className="p-0 mb-6">
         <CardTitle className="font-serif text-2xl font-bold text-slate-100">Asset Holdings & Valuation</CardTitle>
       </CardHeader>
@@ -76,19 +77,19 @@ export function Portfolio() {
         <div className="grid sm:grid-cols-2 gap-4 bg-zinc-900/80 backdrop-blur-md p-6 rounded-xl border border-white/10 shadow-lg">
           <div>
             <div className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1">Total Net Portfolio Value</div>
-            <div className="font-serif text-3xl font-bold text-slate-100">
+            <div className="font-serif text-3xl font-bold text-white drop-shadow-sm">
               ${totalValue.toFixed(2)} SUSD
             </div>
           </div>
           <div>
             <div className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1">Liquid Cash Balance</div>
-            <div className="font-mono text-2xl font-bold text-emerald-400">
+            <div className="font-mono text-2xl font-bold text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.6)]">
               {typeof cashBalance === "bigint" ? `${formatUnits(cashBalance)} SUSD` : "0.0000 SUSD"}
             </div>
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-950/50 backdrop-blur-sm">
+        <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-950/50 backdrop-blur-sm relative">
           <Table>
             <TableHeader>
               <TableRow className="bg-zinc-900/80 border-b border-white/10 hover:bg-zinc-900/80">
@@ -105,24 +106,32 @@ export function Portfolio() {
                 <TableRow key={stock.id} className="hover:bg-zinc-800/50 bg-zinc-950/40 border-b border-white/10 transition-colors">
                   <TableCell className="font-serif font-bold text-slate-100 text-base">{displayTicker}</TableCell>
                   <TableCell className="text-slate-300 text-sm">{displayName}</TableCell>
-                  <TableCell className="text-right font-mono text-red-500 font-medium">${basePrice > 0 ? basePrice.toFixed(2) : "..."}</TableCell>
+                  <TableCell className="text-right font-mono text-red-500 font-medium">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse mr-1.5 align-middle" />
+                    ${basePrice > 0 ? basePrice.toFixed(2) : "..."}
+                  </TableCell>
                   <TableCell className="text-right font-mono text-slate-100 font-semibold">
                     {typeof price === "bigint" ? `${formatPrice(price)} SUSD` : (basePrice > 0 ? `$${basePrice.toFixed(2)}` : "...")}
                   </TableCell>
-                  <TableCell className="text-right font-mono text-slate-300">
+                  <TableCell className="text-right font-mono font-semibold text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]">
                     {typeof shares === "bigint" ? `${(Number(shares) / 1e18).toFixed(4)}` : "0.0000"}
                   </TableCell>
-                  <TableCell className="text-right font-mono font-bold text-emerald-400">
+                  <TableCell className="text-right font-mono font-bold text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]">
                     ${value.toFixed(2)} SUSD
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+
+          {/* Glowing Spark Element on Far-Right Table Edge */}
+          <div className="absolute bottom-2 right-2 pointer-events-none flex items-center gap-1 text-emerald-300/80">
+            <Sparkles className="h-4 w-4 drop-shadow-[0_0_10px_rgba(255,255,255,0.9)] animate-pulse" />
+          </div>
         </div>
 
-        <p className="text-xs font-mono text-slate-400">
-          * Live share balances updated via on-chain StockAMM.getUserShares queries on Monad Testnet.
+        <p className="text-xs font-mono text-slate-400 flex items-center justify-between">
+          <span>* Live share balances updated via on-chain StockAMM.getUserShares queries on Monad Testnet.</span>
         </p>
       </CardContent>
     </Card>
