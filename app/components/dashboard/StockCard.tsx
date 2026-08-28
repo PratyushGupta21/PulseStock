@@ -91,7 +91,7 @@ export function StockCard({ stockId, ticker, name }: StockCardProps) {
     <>
       <Card
         onClick={() => setIsTradeOpen(true)}
-        className="h-full bg-black/80 backdrop-blur-sm border border-white/10 p-5 rounded-xl shadow-md flex flex-col justify-between hover:border-white/30 hover:shadow-[0_0_20px_rgba(255,255,255,0.05)] transition-all duration-300 cursor-pointer group"
+        className="h-full bg-zinc-950/80 backdrop-blur-md border border-white/10 rounded-2xl p-5 shadow-md flex flex-col justify-between hover:border-white/30 hover:shadow-[0_0_20px_rgba(255,255,255,0.05)] transition-all duration-300 cursor-pointer group"
       >
         <CardHeader className="p-0 mb-3">
           <div className="flex items-start justify-between gap-2">

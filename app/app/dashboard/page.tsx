@@ -13,8 +13,22 @@ export default function DashboardPage() {
   const { isConnected } = useAccount()
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white">
-      <Navbar />
+    <div className="relative min-h-screen bg-transparent text-white overflow-hidden">
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        className="fixed inset-0 w-full h-full z-0 object-cover pointer-events-none"
+      >
+        <source src="/hero-bg.mp4" type="video/mp4" />
+      </video>
+
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] z-[1] pointer-events-none" />
+
+      <div className="relative z-10 bg-transparent min-h-screen">
+        <Navbar />
 
       <main className="container mx-auto px-6 py-12">
         <div className="mb-10">
@@ -91,6 +105,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </main>
+      </div>
     </div>
   )
 }
