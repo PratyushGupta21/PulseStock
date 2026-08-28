@@ -73,51 +73,53 @@ export function Leaderboard() {
   const sorted = [...portfolios].sort((a, b) => b.totalValue - a.totalValue)
 
   return (
-    <Card className="bg-black/80 backdrop-blur-sm border border-white/10 p-8 rounded-xl shadow-md">
+    <Card className="bg-zinc-950/70 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl p-6">
       <CardHeader className="p-0 mb-6">
         <div className="flex items-center justify-between">
           <CardTitle className="font-serif text-2xl font-bold text-white flex items-center gap-3">
-            <Trophy className="h-6 w-6 text-white" />
+            <Trophy className="h-6 w-6 text-amber-400" />
             Trader Leaderboard & Ranking
           </CardTitle>
-          <span className="text-xs font-mono text-[#9a9a9a] px-3 py-1 rounded bg-black border border-white/10">
+          <span className="text-xs font-mono text-zinc-300 px-3 py-1.5 rounded-lg bg-zinc-900/80 backdrop-blur-md border border-white/10 shadow-sm">
             Live Feed: {lastUpdate.toLocaleTimeString()}
           </span>
         </div>
       </CardHeader>
       <CardContent className="p-0">
         {sorted.length === 0 ? (
-          <div className="bg-black p-12 text-center rounded-lg border border-white/10 text-[#9a9a9a]">
+          <div className="bg-zinc-900/60 backdrop-blur-md p-12 text-center rounded-xl border border-white/10 text-zinc-300">
             <p className="font-serif text-lg font-semibold text-white mb-1">No Trade Events Recorded Yet</p>
-            <p className="text-sm">Initiate a buy or sell order on the Trade tab to rank on the global leaderboard.</p>
+            <p className="text-sm text-zinc-400">Initiate a buy or sell order on the Trade tab to rank on the global leaderboard.</p>
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-black border-b border-white/10">
-                <TableHead className="text-[#9a9a9a] font-mono text-xs uppercase font-semibold w-24">Rank</TableHead>
-                <TableHead className="text-[#9a9a9a] font-mono text-xs uppercase font-semibold">Wallet Address</TableHead>
-                <TableHead className="text-right text-[#9a9a9a] font-mono text-xs uppercase font-semibold">Net Portfolio Value</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="bg-zinc-950/40 divide-y divide-white/10">
-              {sorted.slice(0, 10).map((p, i) => (
-                <TableRow key={p.address} className="hover:bg-zinc-900/40 border-b border-white/10 transition-colors">
-                  <TableCell className="font-serif font-bold text-white text-base">
-                    {i === 0 && <Trophy className="h-4 w-4 text-white inline mr-2" />}
-                    #{i + 1}
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-white">
-                    {p.address.slice(0, 8)}...{p.address.slice(-6)}
-                  </TableCell>
-                  <TableCell className="text-right font-mono font-bold text-[#22C55E]">
-                    {p.totalValue.toFixed(2)} SUSD
-                    <TrendingUp className="h-3.5 w-3.5 inline text-[#22C55E] ml-1.5" />
-                  </TableCell>
+          <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-950/40 backdrop-blur-sm">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-zinc-900/80 border-b border-white/10 hover:bg-zinc-900/80">
+                  <TableHead className="text-zinc-400 font-mono text-xs uppercase font-semibold w-24">Rank</TableHead>
+                  <TableHead className="text-zinc-400 font-mono text-xs uppercase font-semibold">Wallet Address</TableHead>
+                  <TableHead className="text-right text-zinc-400 font-mono text-xs uppercase font-semibold">Net Portfolio Value</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody className="divide-y divide-white/10">
+                {sorted.slice(0, 10).map((p, i) => (
+                  <TableRow key={p.address} className="hover:bg-zinc-800/50 bg-zinc-950/40 border-b border-white/10 transition-colors">
+                    <TableCell className="font-serif font-bold text-white text-base">
+                      {i === 0 && <Trophy className="h-4 w-4 text-amber-400 inline mr-2" />}
+                      #{i + 1}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm text-zinc-200 font-medium">
+                      {p.address.slice(0, 8)}...{p.address.slice(-6)}
+                    </TableCell>
+                    <TableCell className="text-right font-mono font-bold text-emerald-400">
+                      {p.totalValue.toFixed(2)} SUSD
+                      <TrendingUp className="h-3.5 w-3.5 inline text-emerald-400 ml-1.5" />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </CardContent>
     </Card>
