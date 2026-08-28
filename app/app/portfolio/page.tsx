@@ -34,7 +34,7 @@ export default function PortfolioPage() {
           </div>
 
           {!isConnected && (
-            <Card className="mb-8 bg-zinc-950/80 backdrop-blur-md border border-white/10 p-8 rounded-2xl shadow-2xl">
+            <Card className="mb-8 bg-black/40 backdrop-blur-sm border border-white/10 p-8 rounded-2xl shadow-2xl">
               <CardContent className="p-0 text-center space-y-4">
                 <p className="font-serif text-lg font-bold text-slate-200">Connect your wallet to view your active portfolio</p>
                 <div className="flex justify-center">

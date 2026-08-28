@@ -60,7 +60,7 @@ export function Portfolio() {
 
   if (!isConnected) {
     return (
-      <Card className="bg-zinc-950/80 backdrop-blur-md border border-white/10 p-8 rounded-2xl shadow-2xl">
+      <Card className="bg-black/40 backdrop-blur-sm border border-white/10 p-8 rounded-2xl shadow-2xl">
         <CardContent className="p-0 text-center">
           <p className="text-slate-300">Connect wallet to view portfolio valuation</p>
         </CardContent>
@@ -69,12 +69,12 @@ export function Portfolio() {
   }
 
   return (
-    <Card className="bg-zinc-950/80 backdrop-blur-md border border-white/10 p-6 rounded-2xl shadow-2xl relative overflow-hidden">
+    <Card className="bg-black/40 backdrop-blur-sm border border-white/10 p-6 rounded-2xl shadow-2xl relative overflow-hidden">
       <CardHeader className="p-0 mb-6">
         <CardTitle className="font-serif text-2xl font-bold text-slate-100">Asset Holdings & Valuation</CardTitle>
       </CardHeader>
       <CardContent className="p-0 space-y-6">
-        <div className="grid sm:grid-cols-2 gap-4 bg-zinc-900/80 backdrop-blur-md p-6 rounded-xl border border-white/10 shadow-lg">
+        <div className="grid sm:grid-cols-2 gap-4 bg-black/30 backdrop-blur-sm p-6 rounded-xl border border-white/10 shadow-lg">
           <div>
             <div className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1">Total Net Portfolio Value</div>
             <div className="font-serif text-3xl font-bold text-white drop-shadow-sm">
@@ -89,21 +89,21 @@ export function Portfolio() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-950/50 backdrop-blur-sm relative">
+        <div className="overflow-hidden rounded-xl border border-white/10 bg-black/20 backdrop-blur-sm relative">
           <Table>
             <TableHeader>
-              <TableRow className="bg-zinc-900/80 border-b border-white/10 hover:bg-zinc-900/80">
-                <TableHead className="text-slate-400 font-mono text-xs uppercase font-semibold">Ticker</TableHead>
-                <TableHead className="text-slate-400 font-mono text-xs uppercase font-semibold">Company</TableHead>
-                <TableHead className="text-right text-slate-400 font-mono text-xs uppercase font-semibold">24h Anchor</TableHead>
-                <TableHead className="text-right text-slate-400 font-mono text-xs uppercase font-semibold">Spot Price</TableHead>
-                <TableHead className="text-right text-slate-400 font-mono text-xs uppercase font-semibold">Held Quantity</TableHead>
-                <TableHead className="text-right text-slate-400 font-mono text-xs uppercase font-semibold">Position Value</TableHead>
+              <TableRow className="bg-black/40 border-b border-white/10 hover:bg-black/40">
+                <TableHead className="text-slate-300 font-mono text-xs uppercase font-semibold">Ticker</TableHead>
+                <TableHead className="text-slate-300 font-mono text-xs uppercase font-semibold">Company</TableHead>
+                <TableHead className="text-right text-slate-300 font-mono text-xs uppercase font-semibold">24h Anchor</TableHead>
+                <TableHead className="text-right text-slate-300 font-mono text-xs uppercase font-semibold">Spot Price</TableHead>
+                <TableHead className="text-right text-slate-300 font-mono text-xs uppercase font-semibold">Held Quantity</TableHead>
+                <TableHead className="text-right text-slate-300 font-mono text-xs uppercase font-semibold">Position Value</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-white/10">
               {holdings.map(({ stock, displayTicker, displayName, basePrice, price, shares, value }) => (
-                <TableRow key={stock.id} className="hover:bg-zinc-800/50 bg-zinc-950/40 border-b border-white/10 transition-colors">
+                <TableRow key={stock.id} className="hover:bg-white/[0.08] bg-white/[0.03] border-b border-white/10 transition-colors">
                   <TableCell className="font-serif font-bold text-slate-100 text-base">{displayTicker}</TableCell>
                   <TableCell className="text-slate-300 text-sm">{displayName}</TableCell>
                   <TableCell className="text-right font-mono text-red-500 font-medium">
