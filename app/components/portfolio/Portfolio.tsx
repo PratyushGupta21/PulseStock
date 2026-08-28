@@ -89,10 +89,10 @@ export function Portfolio() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-white/10 bg-black/20 backdrop-blur-sm relative">
+        <div className="overflow-hidden rounded-xl border border-white/10 bg-transparent relative">
           <Table>
-            <TableHeader>
-              <TableRow className="bg-black/40 border-b border-white/10 hover:bg-black/40">
+            <TableHeader className="bg-transparent">
+              <TableRow className="bg-transparent border-b border-white/10 hover:bg-transparent">
                 <TableHead className="text-slate-300 font-mono text-xs uppercase font-semibold">Ticker</TableHead>
                 <TableHead className="text-slate-300 font-mono text-xs uppercase font-semibold">Company</TableHead>
                 <TableHead className="text-right text-slate-300 font-mono text-xs uppercase font-semibold">24h Anchor</TableHead>
@@ -101,16 +101,16 @@ export function Portfolio() {
                 <TableHead className="text-right text-slate-300 font-mono text-xs uppercase font-semibold">Position Value</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className="divide-y divide-white/10">
+            <TableBody className="bg-transparent divide-y divide-white/10">
               {holdings.map(({ stock, displayTicker, displayName, basePrice, price, shares, value }) => (
-                <TableRow key={stock.id} className="hover:bg-white/[0.08] bg-white/[0.03] border-b border-white/10 transition-colors">
-                  <TableCell className="font-serif font-bold text-slate-100 text-base">{displayTicker}</TableCell>
+                <TableRow key={stock.id} className="hover:bg-white/[0.05] bg-transparent border-b border-white/10 transition-colors">
+                  <TableCell className="font-serif font-bold text-white text-base">{displayTicker}</TableCell>
                   <TableCell className="text-slate-300 text-sm">{displayName}</TableCell>
                   <TableCell className="text-right font-mono text-red-500 font-medium">
                     <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse mr-1.5 align-middle" />
                     ${basePrice > 0 ? basePrice.toFixed(2) : "..."}
                   </TableCell>
-                  <TableCell className="text-right font-mono text-slate-100 font-semibold">
+                  <TableCell className="text-right font-mono text-white font-semibold">
                     {typeof price === "bigint" ? `${formatPrice(price)} SUSD` : (basePrice > 0 ? `$${basePrice.toFixed(2)}` : "...")}
                   </TableCell>
                   <TableCell className="text-right font-mono font-semibold text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]">
