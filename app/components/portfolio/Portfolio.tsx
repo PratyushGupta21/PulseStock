@@ -69,7 +69,7 @@ export function Portfolio() {
   }
 
   return (
-    <Card className="bg-zinc-950/80 backdrop-blur-md border border-white/10 p-6 rounded-2xl shadow-2xl relative overflow-hidden">
+    <Card className="bg-zinc-950/70 backdrop-blur-md border border-white/10 p-6 rounded-2xl shadow-2xl relative overflow-hidden">
       <CardHeader className="p-0 mb-6">
         <CardTitle className="font-serif text-2xl font-bold text-slate-100">Asset Holdings & Valuation</CardTitle>
       </CardHeader>
