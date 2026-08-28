@@ -17,7 +17,7 @@ export function Navbar() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#000000]/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/60 backdrop-blur-md">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <PulseStockLogo />
 
@@ -30,7 +30,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
                   isActive
                     ? "border border-white/10 bg-zinc-800 text-white font-semibold"
                     : "text-[#9a9a9a] hover:text-white hover:border hover:border-white/10 hover:bg-white/5"

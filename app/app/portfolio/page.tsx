@@ -13,11 +13,11 @@ export default function PortfolioPage() {
     <div className="relative min-h-screen w-full bg-black text-white overflow-hidden">
       {/* Full-Bleed Background Image */}
       <div 
-        className="fixed inset-0 w-full h-full z-0 bg-cover bg-center bg-no-repeat pointer-events-none filter grayscale contrast-125"
+        className="fixed inset-0 w-full h-full z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
         style={{ backgroundImage: "url('/portfolio-bg.jpg')" }}
       >
-        {/* Darkening & Dimming Scrim Overlay */}
-        <div className="absolute inset-0 bg-black/75 backdrop-blur-[1px]" />
+        {/* Light Scrim Overlay */}
+        <div className="absolute inset-0 bg-black/20" />
       </div>
 
       {/* Main Portfolio Content Layer */}
