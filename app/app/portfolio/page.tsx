@@ -10,33 +10,43 @@ export default function PortfolioPage() {
   const { isConnected } = useAccount()
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white">
-      <Navbar />
+    <div className="relative min-h-screen w-full bg-black text-white overflow-hidden">
+      {/* Full-Bleed Background Image */}
+      <div 
+        className="fixed inset-0 w-full h-full z-0 bg-cover bg-center bg-no-repeat pointer-events-none filter grayscale contrast-125"
+        style={{ backgroundImage: "url('/portfolio-bg.jpg')" }}
+      >
+        {/* Darkening & Dimming Scrim Overlay */}
+        <div className="absolute inset-0 bg-black/75 backdrop-blur-[1px]" />
+      </div>
 
-      {/* Main Container */}
-      <main className="container mx-auto px-6 py-12 max-w-4xl">
-        <div className="mb-10">
-          <h1 className="font-serif text-4xl font-bold tracking-tight text-white mb-3">
-            Portfolio & Asset Management
-          </h1>
-          <p className="text-[#9a9a9a] text-base font-medium">
-            Comprehensive overview of your synthetic stock positions and liquid SUSD cash reserves across real equities.
-          </p>
-        </div>
+      {/* Main Portfolio Content Layer */}
+      <div className="relative z-10 min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+          <div className="mb-8">
+            <h1 className="font-serif text-4xl font-bold tracking-tight text-slate-100 mb-3">
+              Portfolio & Asset Management
+            </h1>
+            <p className="text-slate-300 text-base font-medium">
+              Comprehensive overview of your synthetic stock positions and liquid SUSD cash reserves across real equities.
+            </p>
+          </div>
 
-        {!isConnected && (
-          <Card className="mb-8 bg-black/80 backdrop-blur-sm border border-white/10 p-8 rounded-xl shadow-md">
-            <CardContent className="p-0 text-center space-y-4">
-              <p className="font-serif text-lg font-bold text-white">Connect your wallet to view your active portfolio</p>
-              <div className="flex justify-center">
-                <ConnectButton />
-              </div>
-            </CardContent>
-          </Card>
-        )}
+          {!isConnected && (
+            <Card className="mb-8 bg-zinc-950/80 backdrop-blur-md border border-white/10 p-8 rounded-2xl shadow-2xl">
+              <CardContent className="p-0 text-center space-y-4">
+                <p className="font-serif text-lg font-bold text-slate-200">Connect your wallet to view your active portfolio</p>
+                <div className="flex justify-center">
+                  <ConnectButton />
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-        <Portfolio />
-      </main>
+          <Portfolio />
+        </main>
+      </div>
     </div>
   )
 }
