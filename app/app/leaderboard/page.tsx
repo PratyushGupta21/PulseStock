@@ -22,7 +22,7 @@ export default function LeaderboardPage() {
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
           <div className="mb-8">
             <h1 className="font-serif text-4xl font-bold tracking-tight text-white mb-3 flex items-center gap-3">
-              <Trophy className="h-8 w-8 text-amber-400" />
+              <Trophy className="w-8 h-8 text-slate-200 drop-shadow-[0_0_8px_rgba(226,232,240,0.8)] filter brightness-125" />
               Global Trader Rankings
             </h1>
             <p className="text-zinc-300 text-base font-medium">

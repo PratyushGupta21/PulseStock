@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { Instrument_Serif } from "next/font/google"
 import { Navbar } from "@/components/Navbar"
-import { Footer } from "@/components/Footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Wallet, Zap, TrendingUp, Anchor, Activity, ArrowRight, ShieldCheck } from "lucide-react"
@@ -153,8 +152,6 @@ export default function HomePage() {
             </Link>
           </section>
         </main>
-
-        <Footer />
       </div>
     </div>
   )

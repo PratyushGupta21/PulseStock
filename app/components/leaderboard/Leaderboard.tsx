@@ -77,7 +77,7 @@ export function Leaderboard() {
       <CardHeader className="p-0 mb-6">
         <div className="flex items-center justify-between">
           <CardTitle className="font-serif text-2xl font-bold text-white flex items-center gap-3">
-            <Trophy className="h-6 w-6 text-amber-400" />
+            <Trophy className="w-6 h-6 text-slate-200 drop-shadow-[0_0_8px_rgba(226,232,240,0.8)] filter brightness-125" />
             Trader Leaderboard & Ranking
           </CardTitle>
           <span className="text-xs font-mono text-zinc-300 px-3 py-1.5 rounded-lg bg-zinc-900/80 backdrop-blur-md border border-white/10 shadow-sm">
@@ -105,7 +105,7 @@ export function Leaderboard() {
                 {sorted.slice(0, 10).map((p, i) => (
                   <TableRow key={p.address} className="hover:bg-zinc-800/50 bg-zinc-950/40 border-b border-white/10 transition-colors">
                     <TableCell className="font-serif font-bold text-white text-base">
-                      {i === 0 && <Trophy className="h-4 w-4 text-amber-400 inline mr-2" />}
+                      {i === 0 && <Trophy className="w-4 h-4 text-slate-200 drop-shadow-[0_0_6px_rgba(226,232,240,0.8)] filter brightness-125 inline mr-2" />}
                       #{i + 1}
                     </TableCell>
                     <TableCell className="font-mono text-sm text-zinc-200 font-medium">

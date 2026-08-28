@@ -2,7 +2,6 @@
 
 import { ReactNode } from "react"
 import { Navbar } from "@/components/Navbar"
-import { Footer } from "@/components/Footer"
 
 export function ContentPageLayout({ children }: { children: ReactNode }) {
   return (
@@ -11,7 +10,6 @@ export function ContentPageLayout({ children }: { children: ReactNode }) {
       <main className="container mx-auto px-6 py-16 max-w-4xl">
         {children}
       </main>
-      <Footer />
     </div>
   )
 }
