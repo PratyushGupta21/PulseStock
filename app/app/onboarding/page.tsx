@@ -26,7 +26,7 @@ export default function OnboardingPage() {
             Onboarding & Wallet Provisioning
           </h1>
           <p className="text-[#9a9a9a] text-base max-w-xl mx-auto font-medium">
-            Claim your 100,000 SUSD starter funds and trade real equities (AAPL, TSLA, NVDA, GOOGL, MSFT) on Monad testnet.
+            Claim your 100,000 MON starter funds and trade real equities (AAPL, TSLA, NVDA, GOOGL, MSFT) on Monad testnet.
           </p>
         </div>
 
@@ -57,10 +57,10 @@ export default function OnboardingPage() {
           <CardHeader className="p-0 mb-4">
             <CardTitle className="font-serif text-xl font-bold text-white flex items-center gap-3">
               <Zap className="h-5 w-5 text-[#22C55E]" />
-              Step 2: Mint Starter Liquidity (SUSD)
+              Step 2: Mint Starter Liquidity (MON)
             </CardTitle>
             <CardDescription className="text-[#9a9a9a]">
-              Receive 100,000 SUSD (SimUSD) play money to start trading. One-time claim per address.
+              Receive 100,000 MON play money to start trading. One-time claim per address.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
@@ -95,7 +95,7 @@ export default function OnboardingPage() {
             <li><span className="text-white font-semibold">Network Name:</span> Monad Testnet</li>
             <li><span className="text-white font-semibold">Chain ID:</span> 10143</li>
             <li><span className="text-white font-semibold">RPC URL:</span> https://testnet-rpc.monad.xyz</li>
-            <li><span className="text-white font-semibold">Faucet Asset:</span> SUSD (SimUSD ERC-20)</li>
+            <li><span className="text-white font-semibold">Faucet Asset:</span> MON (ERC-20 / Native MON)</li>
           </ul>
         </div>
       </main>

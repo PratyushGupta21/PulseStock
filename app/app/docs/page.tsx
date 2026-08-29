@@ -40,6 +40,45 @@ export default function DocsPage() {
         </div>
       </section>
 
+      {/* Monad Architecture & Execution Rules */}
+      <section className="mb-12">
+        <div className="border border-white/10 bg-zinc-950/60 rounded-xl p-8">
+          <div className="flex items-center gap-3 mb-4">
+            <Cpu className="h-5 w-5 text-emerald-400" />
+            <h2 className="text-2xl font-bold text-white">Monad Execution Rules</h2>
+          </div>
+          <p className="text-[#9a9a9a] text-sm leading-relaxed mb-6">
+            PulseStock leverages Monad&apos;s high-performance Layer 1 architecture. Key execution characteristics include:
+          </p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="bg-black rounded-lg border border-white/10 p-5">
+              <h3 className="text-white font-mono text-sm font-bold mb-2">⚡ 400ms Blocks & 800ms Finality</h3>
+              <p className="text-[#9a9a9a] text-xs leading-relaxed">
+                Blocks are produced every 400ms and achieve irreversible finality in 800ms across 10,000 TPS network capacity.
+              </p>
+            </div>
+            <div className="bg-black rounded-lg border border-white/10 p-5">
+              <h3 className="text-white font-mono text-sm font-bold mb-2">⛽ Gas Charged on Gas Limit</h3>
+              <p className="text-[#9a9a9a] text-xs leading-relaxed">
+                Monad charges gas as <code className="text-white">gas_limit × price_per_gas</code>. PulseStock sets tight, explicit gas limits (~60k approval, ~150k trade) so users don&apos;t overpay.
+              </p>
+            </div>
+            <div className="bg-black rounded-lg border border-white/10 p-5">
+              <h3 className="text-white font-mono text-sm font-bold mb-2">🔄 Asynchronous Execution (D=3)</h3>
+              <p className="text-[#9a9a9a] text-xs leading-relaxed">
+                Consensus and execution run asynchronously with a 3-block delayed state view (~1.2s). Newly funded accounts become usable after ~1.2s.
+              </p>
+            </div>
+            <div className="bg-black rounded-lg border border-white/10 p-5">
+              <h3 className="text-white font-mono text-sm font-bold mb-2">🛡️ 10 MON Reserve Floor</h3>
+              <p className="text-[#9a9a9a] text-xs leading-relaxed">
+                Monad enforces a 10 MON safety floor per EOA to protect asynchronous consensus. Accounts below 10 MON are throttled to 1 tx per ~1.2s.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Bonding Curve Formula */}
       <section className="mb-12">
         <div className="border border-white/10 bg-zinc-950/60 rounded-xl p-8">
@@ -77,11 +116,11 @@ export default function DocsPage() {
           <div className="space-y-6">
             <div className="bg-black rounded-lg border border-white/10 p-4">
               <h3 className="text-white font-mono text-sm font-bold mb-2">buyShares(uint256 stockId, uint256 amount)</h3>
-              <p className="text-[#9a9a9a] text-xs">Purchase synthetic shares. Requires prior SUSD approval. Returns actual cost computed by bonding curve.</p>
+              <p className="text-[#9a9a9a] text-xs">Purchase synthetic shares. Requires prior MON approval. Returns actual cost computed by bonding curve.</p>
             </div>
             <div className="bg-black rounded-lg border border-white/10 p-4">
               <h3 className="text-white font-mono text-sm font-bold mb-2">sellShares(uint256 stockId, uint256 amount)</h3>
-              <p className="text-[#9a9a9a] text-xs">Sell synthetic shares back to the AMM. Returns SUSD proceeds based on current curve state.</p>
+              <p className="text-[#9a9a9a] text-xs">Sell synthetic shares back to the AMM. Returns MON proceeds based on current curve state.</p>
             </div>
             <div className="bg-black rounded-lg border border-white/10 p-4">
               <h3 className="text-white font-mono text-sm font-bold mb-2">getPrice(uint256 stockId) → uint256</h3>
@@ -108,8 +147,8 @@ export default function DocsPage() {
               <p className="text-[#9a9a9a] text-xs font-mono break-all">Core bonding curve AMM contract — Monad Testnet</p>
             </div>
             <div className="bg-black rounded-lg border border-white/10 p-4">
-              <p className="text-white text-sm font-semibold mb-1">SimUSD (SUSD)</p>
-              <p className="text-[#9a9a9a] text-xs font-mono break-all">ERC-20 synthetic stablecoin for trading — Faucet-mintable</p>
+              <p className="text-white text-sm font-semibold mb-1">MON Token</p>
+              <p className="text-[#9a9a9a] text-xs font-mono break-all">Monad testnet asset / token for trading — Faucet-mintable</p>
             </div>
           </div>
         </div>
@@ -123,7 +162,7 @@ export default function DocsPage() {
             <h2 className="text-2xl font-bold text-white">Technology Stack</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {["Next.js 14", "TypeScript", "wagmi / viem", "Solidity 0.8.x", "Foundry", "Recharts", "Monad Testnet", "Marketstack API", "Tailwind CSS"].map((tech) => (
+            {["Next.js 14", "TypeScript", "wagmi / viem", "Solidity 0.8.x", "Foundry", "Recharts", "Monad Testnet", "Alpha Vantage API", "Tailwind CSS"].map((tech) => (
               <div key={tech} className="bg-black rounded-lg border border-white/10 px-4 py-3 text-center">
                 <span className="text-white text-sm font-mono">{tech}</span>
               </div>

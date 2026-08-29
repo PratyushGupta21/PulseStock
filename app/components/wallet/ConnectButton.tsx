@@ -1,11 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useAccount, useConnect, useDisconnect, useReadContract } from "wagmi"
+import { useAccount, useConnect, useDisconnect, useReadContract, useBalance } from "wagmi"
 import { Button } from "@/components/ui/button"
-import { Wallet, LogOut } from "lucide-react"
+import { Wallet, LogOut, AlertTriangle } from "lucide-react"
 import { formatUnits, shortenAddress } from "@/lib/utils"
 import { PLAY_MONEY_ADDRESS, playMoneyAbi } from "@/lib/contracts/contracts"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 export function ConnectButton({ className }: { className?: string }) {
   const [mounted, setMounted] = useState(false)
@@ -24,6 +25,15 @@ export function ConnectButton({ className }: { className?: string }) {
     args: address ? [address] : undefined,
     query: { enabled: !!address && mounted },
   })
+
+  // Native MON balance for reserve balance warnings (Monad 10 MON floor)
+  const { data: nativeBalance } = useBalance({
+    address: address,
+    query: { enabled: !!address && mounted, refetchInterval: 5000 },
+  })
+
+  const nativeMonBalance = nativeBalance ? Number(nativeBalance.formatted) : 0
+  const isBelowReserve = nativeMonBalance > 0 && nativeMonBalance < 10
 
   const handleConnect = async () => {
     try {
@@ -70,8 +80,33 @@ export function ConnectButton({ className }: { className?: string }) {
         </div>
         {typeof balance === "bigint" && (
           <span className="text-xs font-mono font-medium px-2 py-0.5 rounded bg-white/10 text-white border border-white/20">
-            {formatUnits(balance)} SUSD
+            {formatUnits(balance)} MON
           </span>
+        )}
+        {nativeBalance && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className={`text-xs font-mono font-medium px-2 py-0.5 rounded border ${
+                isBelowReserve
+                  ? "bg-amber-950/40 text-amber-400 border-amber-500/30"
+                  : "bg-white/5 text-[#9a9a9a] border-white/10"
+              }`}>
+                {isBelowReserve && <AlertTriangle className="h-3 w-3 inline mr-1" />}
+                {Number(nativeBalance.formatted).toFixed(2)} MON (native)
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className="bg-black border border-white/20 text-white max-w-xs">
+              {isBelowReserve ? (
+                <p className="text-xs">
+                  ⚠️ Below 10 MON reserve. Monad enforces a 10 MON floor per EOA — low-balance accounts can only send 1 tx every ~1.2s.
+                </p>
+              ) : (
+                <p className="text-xs">
+                  Native MON balance for gas fees. Monad charges gas on gas_limit (not gas used).
+                </p>
+              )}
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
       <Button variant="ghost" size="sm" onClick={() => disconnect()} className="text-[#9a9a9a] hover:text-white hover:bg-white/10">
@@ -79,4 +114,4 @@ export function ConnectButton({ className }: { className?: string }) {
       </Button>
     </div>
   )
-}
+}

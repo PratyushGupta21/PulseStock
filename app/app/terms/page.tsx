@@ -23,7 +23,7 @@ export default function TermsPage() {
         <div className="border border-white/10 bg-zinc-950/60 rounded-xl p-8">
           <h2 className="text-xl font-bold text-white mb-3">2. Nature of the Service</h2>
           <p className="text-[#9a9a9a] text-sm leading-relaxed">
-            PulseStock operates on Monad Testnet using synthetic tokens (SimUSD / SUSD) that have no real-world monetary value. All &quot;trades&quot; are simulated interactions with bonding curve smart contracts. The synthetic equities (AAPL, TSLA, NVDA, etc.) are not actual securities and do not represent ownership in any real company. Price movements are driven by bonding curve mechanics and may not reflect actual market conditions.
+            PulseStock operates on Monad Testnet using testnet tokens (MON) that have no real-world monetary value. All &quot;trades&quot; are simulated interactions with bonding curve smart contracts. The stocks (AAPL, TSLA, NVDA, etc.) are not actual securities and do not represent ownership in any real company. Price movements are driven by bonding curve mechanics and may not reflect actual market conditions.
           </p>
         </div>
 

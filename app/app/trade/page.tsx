@@ -68,19 +68,19 @@ export default function TradePage() {
           <CardContent className="p-0">
             <div className="grid md:grid-cols-2 gap-8 text-sm text-[#9a9a9a]">
               <div className="bg-zinc-950/60 p-6 rounded-lg border border-white/10">
-                <h4 className="font-serif text-lg font-bold text-white mb-3">Buy Orders (SUSD → Shares)</h4>
+                <h4 className="font-serif text-lg font-bold text-white mb-3">Buy Orders (MON → Shares)</h4>
                 <ul className="space-y-2 list-disc list-inside">
                   <li>Spot price moves up deterministically with order size</li>
                   <li>Shares Out: <code className="font-mono text-xs text-white bg-black px-1.5 py-0.5 rounded border border-white/10">(shareReserve × cashIn) / (cashReserve + cashIn)</code></li>
-                  <li>SUSD transferred directly from wallet to AMM contract</li>
+                  <li>MON transferred directly from wallet to AMM contract</li>
                 </ul>
               </div>
               <div className="bg-zinc-950/60 p-6 rounded-lg border border-white/10">
-                <h4 className="font-serif text-lg font-bold text-white mb-3">Sell Orders (Shares → SUSD)</h4>
+                <h4 className="font-serif text-lg font-bold text-white mb-3">Sell Orders (Shares → MON)</h4>
                 <ul className="space-y-2 list-disc list-inside">
                   <li>Spot price moves down with share redemptions</li>
                   <li>Cash Out: <code className="font-mono text-xs text-white bg-black px-1.5 py-0.5 rounded border border-white/10">(cashReserve × sharesIn) / (shareReserve + sharesIn)</code></li>
-                  <li>SUSD transferred directly from AMM contract back to wallet</li>
+                  <li>MON transferred directly from AMM contract back to wallet</li>
                 </ul>
               </div>
             </div>

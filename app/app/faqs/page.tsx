@@ -10,23 +10,31 @@ const faqs = [
   },
   {
     q: "How does the bonding curve determine prices?",
-    a: "Each stock maintains a constant-product bonding curve: cashReserve × shareReserve = k. The spot price at any moment is cashReserve / shareReserve. When you buy shares, you deposit SUSD into the cash reserve and remove shares from the share reserve, pushing the price up. Selling does the reverse. The curve uses high-sensitivity liquidity parameters (1000 × 10¹⁸ share reserves) to create volatile, responsive price action."
+    a: "Each stock maintains a constant-product bonding curve: cashReserve × shareReserve = k. The spot price at any moment is cashReserve / shareReserve. When you buy shares, you deposit MON into the cash reserve and remove shares from the share reserve, pushing the price up. Selling does the reverse. The curve uses high-sensitivity liquidity parameters (1000 × 10¹⁸ share reserves) to create volatile, responsive price action."
   },
   {
-    q: "What is SimUSD (SUSD)?",
-    a: "SimUSD (SUSD) is a faucet-mintable ERC-20 stablecoin deployed on Monad Testnet. Every new user can claim 100,000 SUSD through the onboarding flow. SUSD has no real monetary value — it exists purely for simulation and testing purposes."
+    q: "What is MON play money?",
+    a: "MON is the native token / testnet asset deployed on Monad Testnet. Every new user can claim 100,000 MON through the onboarding flow. MON play money has zero financial risk — it exists for simulation and testing purposes."
   },
   {
     q: "How fast are trades executed?",
-    a: "PulseStock runs on Monad's parallel EVM, which achieves sub-second block finality. Trades are confirmed on-chain in under 1 second. The frontend uses contract event listeners to update charts and positions instantly without WebSocket polling."
+    a: "PulseStock runs on Monad's parallel EVM with 400ms block times and 800ms finality. Trades are confirmed on-chain in sub-second time. The frontend uses contract event listeners to update charts and positions instantly."
+  },
+  {
+    q: "Why is gas calculated on gas limit on Monad?",
+    a: "Unlike Ethereum where gas is charged on actual gas used, Monad uses asynchronous execution where block leaders build blocks before executing them. Monad charges gas based on gas_limit (gas_paid = gas_limit × price_per_gas). PulseStock sets tight explicit gas limits on all contract calls to keep fees minimal."
+  },
+  {
+    q: "What is the 10 MON reserve balance floor?",
+    a: "Monad enforces a 10 MON reserve floor per EOA to protect asynchronous consensus execution. If an account's balance drops below 10 MON, transactions are throttled to 1 per ~1.2s. PulseStock displays a visual indicator when your native MON balance is close to the reserve floor."
   },
   {
     q: "How are real-world prices integrated?",
-    a: "Base prices for each synthetic stock are fetched from the Marketstack API, which provides real equity closing prices. Every 24 hours, the contract owner can call resetBasePrice() to re-anchor each stock's bonding curve to the latest real closing price, preventing long-term synthetic drift."
+    a: "Base prices for each stock are fetched from Alpha Vantage API live feeds, which provide real equity closing prices. Every 24 hours, the contract owner can call resetBasePrice() to re-anchor each stock's bonding curve to the latest real closing price, preventing long-term synthetic drift."
   },
   {
     q: "Is this real money or real trading?",
-    a: "No. PulseStock is a testnet trading simulation. All assets (SUSD, synthetic shares) are testnet tokens with zero real-world value. No actual equities are bought, sold, or held. This is a demonstration of DeFi bonding curve mechanics applied to equity-like instruments."
+    a: "No. PulseStock is a testnet trading simulation. All assets (MON, stock shares) are testnet tokens with zero real-world value. No actual equities are bought, sold, or held. This is a demonstration of DeFi bonding curve mechanics applied to equity-like instruments."
   },
   {
     q: "What wallets are supported?",
@@ -38,7 +46,7 @@ const faqs = [
   },
   {
     q: "Can I lose my testnet funds?",
-    a: "Your SUSD balance can decrease if you buy shares at a high price and sell at a lower price — exactly like real trading. However, since all funds are testnet tokens, there is no financial risk. You can always claim more SUSD from the faucet."
+    a: "Your MON balance can decrease if you buy shares at a high price and sell at a lower price — exactly like real trading. However, since all funds are testnet tokens, there is no financial risk. You can always claim more MON from the faucet."
   },
   {
     q: "Is the smart contract audited?",

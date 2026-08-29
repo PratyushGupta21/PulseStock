@@ -112,7 +112,7 @@ export function Leaderboard() {
                       {p.address.slice(0, 8)}...{p.address.slice(-6)}
                     </TableCell>
                     <TableCell className="text-right font-mono font-bold text-emerald-400">
-                      {p.totalValue.toFixed(2)} SUSD
+                      ${p.totalValue.toFixed(2)}
                       <TrendingUp className="h-3.5 w-3.5 inline text-emerald-400 ml-1.5" />
                     </TableCell>
                   </TableRow>

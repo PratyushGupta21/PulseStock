@@ -87,14 +87,14 @@ export default function WalletGuidePage() {
         <div className="border border-white/10 bg-zinc-950/60 rounded-xl p-8">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white font-mono text-sm font-bold">4</div>
-            <h2 className="text-xl font-bold text-white">Connect to PulseStock & Claim SUSD</h2>
+            <h2 className="text-xl font-bold text-white">Connect to PulseStock & Claim MON</h2>
           </div>
           <p className="text-[#9a9a9a] text-sm leading-relaxed mb-4">
-            Click &quot;Connect Wallet&quot; in the top-right corner of PulseStock. Once connected, navigate to the Onboarding page and click &quot;Claim 100k SUSD&quot; to receive your starter trading funds.
+            Click &quot;Connect Wallet&quot; in the top-right corner of PulseStock. Once connected, navigate to the Onboarding page and click &quot;Claim 100k MON&quot; to receive your starter trading funds.
           </p>
           <div className="flex items-center gap-2 text-white text-sm">
             <ArrowRight className="h-4 w-4" />
-            <span>You&apos;re ready to trade synthetic equities on Monad!</span>
+            <span>You&apos;re ready to trade stock equities on Monad!</span>
           </div>
         </div>
       </section>

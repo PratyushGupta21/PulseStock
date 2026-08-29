@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { X, Loader2, ArrowUpRight, ArrowDownRight, TrendingUp, TrendingDown, Activity, Clock, Globe } from "lucide-react"
+import { X, Loader2, ArrowUpRight, ArrowDownRight, TrendingUp, TrendingDown, Activity, Clock, Globe, ExternalLink, Fuel } from "lucide-react"
 import { toast } from "sonner"
 import { STOCK_AMM_ADDRESS, stockAmmAbi, PLAY_MONEY_ADDRESS, playMoneyAbi } from "@/lib/contracts/contracts"
 import { formatUnits } from "@/lib/utils"
@@ -141,12 +141,13 @@ export function TradeModal({
         if (amountInWei <= 0n) return
 
         if (!allowance || allowance < amountInWei) {
-          toast.info("Approving SUSD transfer...")
+          toast.info("Approving MON transfer...")
           writeContract({
             address: PLAY_MONEY_ADDRESS,
             abi: playMoneyAbi,
             functionName: "approve",
             args: [STOCK_AMM_ADDRESS, BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")],
+            gas: 60000n,
           })
           return
         }
@@ -156,6 +157,7 @@ export function TradeModal({
           abi: stockAmmAbi,
           functionName: "buy",
           args: [BigInt(stockId), amountInWei],
+          gas: 150000n,
         })
       } else {
         const amountInWei = BigInt(Math.floor(Number(shareAmount) * 1e18))
@@ -166,6 +168,7 @@ export function TradeModal({
           abi: stockAmmAbi,
           functionName: "sell",
           args: [BigInt(stockId), amountInWei],
+          gas: 150000n,
         })
       }
     } catch (e) {
@@ -176,7 +179,13 @@ export function TradeModal({
   const isTradePending = isPending || isConfirming
 
   if (isSuccess) {
-    toast.success("Transaction confirmed!", { description: `Executed trade on Monad testnet` })
+    toast.success("Trade finalized on Monad!", {
+      description: `Confirmed in ~800ms. View on MonadScan.`,
+      action: hash ? {
+        label: "View Tx",
+        onClick: () => window.open(`https://testnet.monadscan.com/tx/${hash}`, "_blank"),
+      } : undefined,
+    })
   }
 
   if (isError) {
@@ -221,7 +230,7 @@ export function TradeModal({
 
             <div className="flex items-baseline gap-3">
               <div className="text-4xl font-extrabold tracking-tight font-mono">
-                ${currentPrice.toFixed(2)} <span className="text-base font-normal text-[#9a9a9a]">SUSD</span>
+                ${currentPrice.toFixed(2)}
               </div>
             </div>
           </div>
@@ -286,7 +295,7 @@ export function TradeModal({
                       color: "#ffffff"
                     }}
                     formatter={(val: any, name: any) => [
-                      `$${Number(val).toFixed(2)} SUSD`,
+                      `$${Number(val).toFixed(2)}`,
                       name === "bondingPrice" ? "On-Chain Bonding Curve" : "Real Market Price"
                     ]}
                   />
@@ -362,14 +371,14 @@ export function TradeModal({
             {/* Amount Input */}
             <div className="space-y-2">
               <label className="text-xs font-semibold text-[#9a9a9a] uppercase tracking-wider">
-                {isBuy ? "SUSD Amount to Spend" : "Shares to Sell"}
+                {isBuy ? "MON Amount to Spend" : "Shares to Sell"}
               </label>
               <Input
                 type="number"
                 step="0.0001"
                 value={isBuy ? cashAmount : shareAmount}
                 onChange={(e) => isBuy ? setCashAmount(e.target.value) : setShareAmount(e.target.value)}
-                placeholder={isBuy ? "e.g. 500 SUSD" : "e.g. 2.5 shares"}
+                placeholder={isBuy ? "e.g. 50 MON" : "e.g. 2.5 shares"}
                 disabled={isTradePending || !isConnected}
                 className="bg-[#000000] border-white/20 text-white h-12 font-mono text-lg font-bold focus-visible:ring-white"
               />
@@ -380,15 +389,38 @@ export function TradeModal({
               <div className="flex justify-between">
                 <span>Estimated Received:</span>
                 <span className="font-mono font-bold text-white text-sm">
-                  {isBuy ? `${estimatedOut.toFixed(4)} shares` : `$${estimatedOut.toFixed(2)} SUSD`}
+                  {isBuy ? `${estimatedOut.toFixed(4)} shares` : `$${estimatedOut.toFixed(2)}`}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>Your SUSD Balance:</span>
+                <span>Your MON Balance:</span>
                 <span className="font-mono text-white font-semibold">
-                  {balance ? `${formatUnits(balance)} SUSD` : "Loading..."}
+                  {balance ? `${formatUnits(balance)} MON` : "Loading..."}
                 </span>
               </div>
+              <div className="flex justify-between">
+                <span className="flex items-center gap-1"><Fuel className="h-3 w-3" />Est. Gas Cost:</span>
+                <span className="font-mono text-white font-semibold">
+                  {isBuy ? "~150,000 gas" : "~150,000 gas"} (charged on limit)
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Finality:</span>
+                <span className="font-mono text-white font-semibold">~800ms (400ms blocks)</span>
+              </div>
+              {isSuccess && hash && (
+                <div className="flex justify-between pt-1 border-t border-white/10">
+                  <span>Transaction:</span>
+                  <a
+                    href={`https://testnet.monadscan.com/tx/${hash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors"
+                  >
+                    View on MonadScan <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
+              )}
             </div>
           </div>
 

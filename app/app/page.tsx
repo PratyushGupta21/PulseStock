@@ -57,7 +57,7 @@ export default function HomePage() {
                   className="w-full sm:w-auto gap-2 bg-gradient-to-b from-white via-zinc-200 to-zinc-400 text-black font-medium border border-white shadow-lg shadow-white/10 hover:opacity-90 transition-opacity px-8 py-4 text-base"
                 >
                   <Wallet className="h-5 w-5 text-black" />
-                  Claim 100k SUSD & Start
+                  Claim 100k MON & Start
                 </Button>
               </Link>
               <Link href="/dashboard">
@@ -76,15 +76,15 @@ export default function HomePage() {
             <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 mt-14 pt-8 border-t border-white/10 text-[#d8d8d8] text-xs font-mono">
               <div className="flex items-center gap-2">
                 <Activity className="h-4 w-4 text-white" />
-                <span>4.2M+ simulated volume</span>
+                <span>10,000 TPS Throughput</span>
               </div>
               <div className="flex items-center gap-2">
                 <Zap className="h-4 w-4 text-white" />
-                <span>Sub-second EVM finality</span>
+                <span>400ms Block Time &bull; 800ms Finality</span>
               </div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-white" />
-                <span>100% On-chain execution</span>
+                <span>100% Parallel EVM Execution</span>
               </div>
             </div>
           </section>
@@ -124,11 +124,11 @@ export default function HomePage() {
                 <div className="p-3 bg-white/5 w-fit rounded-lg border border-white/10 mb-3">
                   <Zap className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="font-serif text-2xl text-[#F8FAFC]">Sub-Second Execution</CardTitle>
+                <CardTitle className="font-serif text-2xl text-[#F8FAFC]">Sub-Second Monad Execution</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <p className="text-[#9a9a9a] text-sm leading-relaxed">
-                  Monad&apos;s parallel EVM confirms trades in &lt;1 second. Web3 contract events drive instant chart updates without WebSockets.
+                  Monad&apos;s parallel EVM confirms trades in 800ms with 400ms block times. Web3 contract events drive instant chart updates.
                 </p>
               </CardContent>
             </Card>
@@ -140,7 +140,7 @@ export default function HomePage() {
               Ready to test your trading strategy?
             </h2>
             <p className="text-[#9a9a9a] mb-8 max-w-xl mx-auto">
-              Get 100,000 SimUSD (SUSD) starter funds minted directly to your browser wallet with one click.
+              Get 100,000 MON starter funds minted directly to your browser wallet with one click.
             </p>
             <Link href="/onboarding">
               <Button

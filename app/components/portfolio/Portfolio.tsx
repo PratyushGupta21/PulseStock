@@ -78,13 +78,13 @@ export function Portfolio() {
           <div>
             <div className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1">Total Net Portfolio Value</div>
             <div className="font-serif text-3xl font-bold text-white drop-shadow-sm">
-              ${totalValue.toFixed(2)} SUSD
+              ${totalValue.toFixed(2)}
             </div>
           </div>
           <div>
             <div className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1">Liquid Cash Balance</div>
             <div className="font-mono text-2xl font-bold text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.6)]">
-              {typeof cashBalance === "bigint" ? `${formatUnits(cashBalance)} SUSD` : "0.0000 SUSD"}
+              {typeof cashBalance === "bigint" ? `${formatUnits(cashBalance)} MON` : "0.0000 MON"}
             </div>
           </div>
         </div>
@@ -111,13 +111,13 @@ export function Portfolio() {
                     ${basePrice > 0 ? basePrice.toFixed(2) : "..."}
                   </TableCell>
                   <TableCell className="text-right font-mono text-white font-semibold">
-                    {typeof price === "bigint" ? `${formatPrice(price)} SUSD` : (basePrice > 0 ? `$${basePrice.toFixed(2)}` : "...")}
+                    {typeof price === "bigint" ? `$${formatPrice(price)}` : (basePrice > 0 ? `$${basePrice.toFixed(2)}` : "...")}
                   </TableCell>
                   <TableCell className="text-right font-mono font-semibold text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]">
                     {typeof shares === "bigint" ? `${(Number(shares) / 1e18).toFixed(4)}` : "0.0000"}
                   </TableCell>
                   <TableCell className="text-right font-mono font-bold text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]">
-                    ${value.toFixed(2)} SUSD
+                    ${value.toFixed(2)}
                   </TableCell>
                 </TableRow>
               ))}

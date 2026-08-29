@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Loader2, ArrowUpRight, ArrowDownRight, Anchor } from "lucide-react"
+import { Loader2, ArrowUpRight, ArrowDownRight, Anchor, Fuel, ExternalLink } from "lucide-react"
 import { toast } from "sonner"
 import { STOCK_AMM_ADDRESS, stockAmmAbi, PLAY_MONEY_ADDRESS, playMoneyAbi } from "@/lib/contracts/contracts"
 import { formatUnits } from "@/lib/utils"
@@ -87,6 +87,7 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
         abi: playMoneyAbi,
         functionName: "approve",
         args: [STOCK_AMM_ADDRESS, amountInWei * BigInt(100)],
+        gas: 60000n,
       })
     } catch (e) {
       toast.error("Approval failed", { description: (e as Error).message })
@@ -102,12 +103,13 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
         if (amountInWei <= BigInt(0)) return
 
         if (!allowance || allowance < amountInWei) {
-          toast.info("Approving SUSD transfer...")
+          toast.info("Approving MON transfer...")
           writeContract({
             address: PLAY_MONEY_ADDRESS,
             abi: playMoneyAbi,
             functionName: "approve",
             args: [STOCK_AMM_ADDRESS, BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")],
+            gas: 60000n,
           })
           return
         }
@@ -117,6 +119,7 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
           abi: stockAmmAbi,
           functionName: "buy",
           args: [BigInt(stockId), amountInWei],
+          gas: 150000n,
         })
       } else {
         const amountInWei = BigInt(Math.floor(Number(shareAmount) * 1e18))
@@ -127,6 +130,7 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
           abi: stockAmmAbi,
           functionName: "sell",
           args: [BigInt(stockId), amountInWei],
+          gas: 150000n,
         })
       }
     } catch (e) {
@@ -137,7 +141,13 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
   const isTradePending = isPending || isConfirming
 
   if (isSuccess) {
-    toast.success("Order Executed!", { description: `Trade successfully broadcast to Monad Testnet` })
+    toast.success("Order Executed!", {
+      description: `Trade finalized on Monad in ~800ms.`,
+      action: hash ? {
+        label: "View Tx",
+        onClick: () => window.open(`https://testnet.monadscan.com/tx/${hash}`, "_blank"),
+      } : undefined,
+    })
   }
 
   if (isError) {
@@ -154,7 +164,7 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
           </CardTitle>
           <div className="text-right">
             <span className="text-xs font-mono text-white font-semibold px-2.5 py-1 rounded bg-black border border-white/10 block">
-              Spot: {currentPrice.toFixed(2)} SUSD
+              Spot: ${currentPrice.toFixed(2)}
             </span>
             <span className="text-[11px] text-[#9a9a9a] font-mono flex items-center justify-end gap-1 mt-1">
               <Anchor className="h-3 w-3 text-white" /> Anchor: ${basePrice.toFixed(2)}
@@ -196,10 +206,10 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
         <div className="space-y-3">
           <div className="flex items-center justify-between text-sm">
             <label className="font-medium text-white">
-              {isBuy ? "SUSD Order Value" : "Shares Quantity"}
+              {isBuy ? "MON Order Value" : "Shares Quantity"}
             </label>
             <span className="font-mono text-xs text-[#9a9a9a]">
-              Available: {typeof balance === "bigint" ? `${formatUnits(balance)} SUSD` : "0.0000 SUSD"}
+              Available: {typeof balance === "bigint" ? `${formatUnits(balance)} MON` : "0.0000 MON"}
             </span>
           </div>
           <Input
@@ -207,7 +217,7 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
             step="0.0001"
             value={isBuy ? cashAmount : shareAmount}
             onChange={(e) => isBuy ? setCashAmount(e.target.value) : setShareAmount(e.target.value)}
-            placeholder={isBuy ? "0.00 SUSD" : "0.0000 Shares"}
+            placeholder={isBuy ? "0.00 MON" : "0.0000 Shares"}
             disabled={isTradePending || !isConnected}
             className="bg-[#000000] border-white/20 text-white h-12 font-mono text-base focus-visible:ring-white"
           />
@@ -235,18 +245,35 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
         <div className="bg-black p-4 rounded-lg border border-white/10 space-y-2 text-xs text-[#9a9a9a]">
           <div className="flex justify-between">
             <span>Execution Price</span>
-            <span className="font-mono font-semibold text-white">${currentPrice.toFixed(2)} SUSD</span>
+            <span className="font-mono font-semibold text-white">${currentPrice.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Estimated Received</span>
             <span className="font-mono font-semibold text-white">
-              {isBuy ? `${estimatedOut.toFixed(4)} shares` : `$${estimatedOut.toFixed(2)} SUSD`}
+              {isBuy ? `${estimatedOut.toFixed(4)} shares` : `$${estimatedOut.toFixed(2)}`}
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Slippage Tolerance</span>
-            <span className="font-mono text-white">0.5% (Algorithmic)</span>
+            <span className="flex items-center gap-1"><Fuel className="h-3 w-3" />Est. Gas Limit</span>
+            <span className="font-mono text-white">~150,000 gas (Monad)</span>
           </div>
+          <div className="flex justify-between">
+            <span>Finality</span>
+            <span className="font-mono text-white">~800ms (400ms blocks)</span>
+          </div>
+          {isSuccess && hash && (
+            <div className="flex justify-between pt-1 border-t border-white/10">
+              <span>Transaction</span>
+              <a
+                href={`https://testnet.monadscan.com/tx/${hash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors"
+              >
+                View on MonadScan <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Action Button */}
@@ -259,10 +286,10 @@ export function TradePanel({ stockId, ticker, name, defaultBasePrice }: TradePan
             {isTradePending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Approving SUSD...
+                Approving MON...
               </>
             ) : (
-              `Step 1: Approve SUSD Allowance`
+              `Step 1: Approve MON Allowance`
             )}
           </Button>
         ) : (

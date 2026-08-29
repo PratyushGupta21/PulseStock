@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
+const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY || 'BGLBN0IDRDXYY3HJ'
 const MARKETSTACK_API_KEY = process.env.MARKETSTACK_API_KEY || '6e489690b975928eea1036ba3b444d71'
 
 const monadTestnet = defineChain({
@@ -47,7 +48,25 @@ const STOCKS: StockTarget[] = [
 ]
 
 async function fetchRealMarketOpenPrice(ticker: string): Promise<number> {
-  // 1. Try Marketstack API
+  // 1. Try Alpha Vantage API
+  try {
+    const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${ticker}&apikey=${ALPHA_VANTAGE_API_KEY}`
+    const res = await fetch(url)
+    if (res.ok) {
+      const data = await res.json()
+      const quote = data?.['Global Quote']
+      const priceStr = quote?.['05. price'] || quote?.['02. open'] || quote?.['08. previous close']
+      const openPrice = priceStr ? parseFloat(priceStr) : null
+      if (typeof openPrice === 'number' && openPrice > 0) {
+        console.log(`[Alpha Vantage API] Fetched live price for ${ticker}: $${openPrice.toFixed(2)}`)
+        return openPrice
+      }
+    }
+  } catch (err) {
+    console.warn(`[Alpha Vantage API] Could not fetch for ${ticker}, trying fallback...`)
+  }
+
+  // 2. Try Marketstack API
   try {
     const url = `http://api.marketstack.com/v1/eod?access_key=${MARKETSTACK_API_KEY}&symbols=${ticker}&limit=1`
     const res = await fetch(url)

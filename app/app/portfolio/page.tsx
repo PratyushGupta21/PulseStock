@@ -29,7 +29,7 @@ export default function PortfolioPage() {
               Portfolio & Asset Management
             </h1>
             <p className="text-slate-300 text-base font-medium">
-              Comprehensive overview of your synthetic stock positions and liquid SUSD cash reserves across real equities.
+              Comprehensive overview of your stock positions and liquid MON cash reserves across real equities.
             </p>
           </div>
 
