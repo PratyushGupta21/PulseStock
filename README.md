@@ -410,3 +410,7 @@ Successful trades display a direct "View on MonadScan" link pointing to `https:/
 
 vermamaanas5@gmail.com
 Mobile no. 8765316576
+
+## Mon Contract Adress:
+
+0xbe6223ac77078d5021ad23112A6A4852f568cdb7
