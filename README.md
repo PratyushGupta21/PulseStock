@@ -1,141 +1,163 @@
-# ⚡ Monad Market Sim — Hybrid Equity AMM
+````markdown
+# 📈 Pulse Stock | Synthetic Equities Protocol on Monad Testnet
 
-> A fully on-chain hybrid stock market simulator built for **Monad** — combining **24-hour real equity price anchors** (AAPL, TSLA, NVDA, GOOGL, MSFT, etc.) with **sensitive intraday bonding curves** (`x * y = k`).
-
----
-
-## 🧠 The Hybrid Model
-
-Unlike pure AMMs or oracle-only platforms, **Monad Market Sim** uses a hybrid price engine:
-
-1. **Daily Real-World Anchoring**: Once every 24 hours, an automated price setter updates the base prices on-chain using yesterday's real closing prices from NYSE/NASDAQ.
-2. **Sensitive Bonding Curve Price Discovery**: Intraday price movements are driven entirely by user trades using a constant product bonding curve (`x * y = k`). With 2,000 SUSD share liquidity per pool, every trade visibly shifts the price relative to the daily anchor.
-3. **Sub-second Event-Driven UI**: Built on Monad's high-throughput parallel EVM, contract events instantly push price updates to Next.js charts without requiring WebSockets.
+**Pulse Stock** is a high-performance, Web3-native equity trading simulator deployed on the **Monad Testnet**. The platform bridges traditional equity markets with decentralized finance (DeFi) by pairing real-world 24-hour stock price anchors with on-chain bonding curve Automated Market Makers (AMMs). Traders can execute sub-second synthetic stock purchases ($AAPL, $TSLA,$NVDA, $GOOGL,$MSFT, $AMZN,$META, $COIN) backed by$sUSD collateral without order book delays.
 
 ---
 
-## 🎯 Key Features & Benefits
+## 🌐 Live Deployment & Network Details
 
-| Feature | Details |
-|---|---|
-| 📈 **Real Equity Tickers** | AAPL, TSLA, NVDA, GOOGL, MSFT, AMZN, META, COIN, and extensible to hundreds more |
-| ⚓ **24-Hour Base Anchor** | Daily re-anchoring to real closing prices prevents unrealistic drift |
-| ⚡ **Sensitive Price Shifts** | Trades dynamically push the price up (buys) or down (sells) instantly |
-| 🌐 **Dynamic Multi-Stock Registry** | Smart contract supports adding unlimited stocks dynamically via `addStock()` |
-| 🤖 **Automated Oracle Script** | Included `price-setter` script updates daily prices on Monad automatically |
-| 🆓 **Zero-Cost Sandbox** | Claim 100,000 SimUSD (SUSD) from the faucet and start trading |
+| Property               | Details                                                                       |
+| :--------------------- | :---------------------------------------------------------------------------- |
+| **Live Web App**       | [https://pulse-stock-nu.vercel.app](https://pulse-stock-nu.vercel.app/)       |
+| **Alternative Domain** | `monad-stock-sim.vercel.app`                                                  |
+| **Target Network**     | Monad Testnet                                                                 |
+| **Chain ID**           | `10143`                                                                       |
+| **RPC URL**            | `https://testnet-rpc.monad.xyz`                                               |
+| **GitHub Repository**  | [`PratyushGupta21/PulseStock`](https://github.com/PratyushGupta21/PulseStock) |
 
 ---
 
-## 🏗 Architecture
+## 🚀 Key Features
 
+- **⚡ Real-Time Price Anchors:** Integrates 24-hour market price anchors ($AAPL,$TSLA, $NVDA,$GOOGL, $MSFT,$AMZN, $META,$COIN) to benchmark synthetic token prices.
+- **🔄 Dynamic Bonding Curve AMM:** Executes instant on-chain buy/sell swaps through contract-defined bonding curves on Monad.
+- **📡 Autonomous Price Setter Service:** Includes a dedicated relayer service (`price-setter/`) that periodically fetches off-chain stock prices and posts anchor updates to smart contracts.
+- **💼 On-Chain Portfolio Dashboard:** Tracks position values ($sUSD), token quantities held per stock, spot prices, and overall wallet balance in real time.
+- **🎨 Cyber Glassmorphism UI:** Built with Next.js 14, Tailwind CSS, custom glassmorphism components, and dynamic ambient background video layers.
+- **🏆 Social Trading & Leaderboard:** Tracks top-performing wallet addresses based on ROI, total portfolio growth, and execution volume.
+
+---
+
+## 🏗 System Architecture
+
+```mermaid
+graph TD
+    A[User Wallet / Web3] -->|1. Connect Wallet| B(Next.js App Interface)
+    B -->|2. Fetch Spot Prices & Positions| D[StockAMM Smart Contracts]
+    C[Price Setter Relayer Service] -->|3. Push 24h Price Anchors| D
+    B -->|4. Trigger Trade Modals| D
+    D -->|5. Bonding Curve Liquidity Execution| E[(Monad Testnet EVM)]
+    E -->|6. Event Logs & Token Balances| B
 ```
-monad-market-sim/
-├── contracts/                  # Foundry (Solidity) project
-│   ├── contracts/
-│   │   ├── PlayMoney.sol       # ERC-20 SimUSD (SUSD) faucet token
-│   │   └── StockAMM.sol        # Dynamic multi-stock hybrid AMM contract
-│   ├── script/
-│   │   └── Deploy.s.sol        # Deploys contract with initial equity prices
-│   └── test/
-│       └── StockAMM.t.sol      # Foundry unit tests for dynamic pricing & resets
-│
-├── price-setter/               # Daily Oracle Price Setter Script
-│   ├── index.ts                # Fetches real closing prices & submits batch tx
-│   └── package.json
-│
-└── app/                        # Next.js 14 (App Router) frontend
-    ├── app/
-    │   ├── dashboard/          # Real-time stock cards with 24h anchors & charts
-    │   ├── trade/              # Buy/Sell trading panel with estimated outputs
-    │   ├── portfolio/          # Real-time cash balance and market prices
-    │   └── leaderboard/        # Rank traders by portfolio value
-    ├── components/             # Reusable React & wagmi components
-    └── lib/contracts/          # Wagmi ABI definitions & stock metadata
-```
+````
 
 ---
 
-## 🔬 Smart Contract Details (`StockAMM.sol`)
+## 📊 StockAMM Bonding Curve Workflow
 
-### Pool Struct
-```solidity
-struct StockInfo {
-    string ticker;
-    string name;
-    uint256 cashReserve;
-    uint256 shareReserve;
-    uint256 basePrice;  // Yesterday's real close (1e18 scaled)
-    uint256 lastReset;  // Timestamp of last 24h reset
-}
-```
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Trader
+    participant UI as Pulse Stock App
+    participant AMM as Monad StockAMM Contract
+    participant Setter as Price Setter Relayer
 
-### Daily Price Re-Anchoring
-```solidity
-function setDailyBasePrice(uint256 stockId, uint256 realPrice) public onlyOwner {
-    StockInfo storage stock = stocks[stockId];
-    stock.cashReserve = (realPrice * shareLiquidity) / 1e18;
-    stock.shareReserve = shareLiquidity;
-    stock.basePrice = realPrice;
-    stock.lastReset = block.timestamp;
-    emit DailyPriceSet(stockId, realPrice, block.timestamp);
-}
+    Setter->>AMM: Update 24h Stock Anchor Price ($319.67 SUSD)
+    Trader->>UI: Select Stock Card (e.g. AAPL) & Click "Trade AAPL"
+    UI->>AMM: Read Current Anchor & Bonding Curve Price
+    AMM-->>UI: Return Spot Price & Slippage Estimate
+    Trader->>UI: Confirm Buy/Sell Transaction
+    UI->>AMM: Send Collateral (SUSD) via Web3 Wallet
+    AMM->>AMM: Adjust Bonding Curve Reserve & Price
+    AMM-->>Trader: Mint / Burn Synthetic Stock Tokens
+
 ```
 
 ---
 
-## 🤖 Daily Price Setter Oracle (`price-setter/`)
+## 🛠 Tech Stack & Tools
 
-To run the daily price setter script:
+- **Frontend Framework:** Next.js 14+ (App Router, React 18, TypeScript)
+- **Styling & Effects:** Tailwind CSS, Lucide React Icons, Glassmorphic UI containers, Full-screen background video layer
+- **Smart Contracts:** Solidity, Foundry Framework (`contracts/script/Deploy.s.sol`, `contracts/test/StockAMM.t.sol`)
+- **Oracle Relayer:** Node.js / TypeScript microservice (`price-setter/`)
+- **Web3 Integration:** Ethers.js, Wagmi / Viem, Monad Testnet RPC
+- **Deployment & CI/CD:** Vercel Hosting (`vercel.json`)
+
+---
+
+## 📂 Repository File Structure
+
+```text
+PulseStock/
+├── app/                        # Next.js App Router root
+│   ├── dashboard/              # Markets & Trade page (/dashboard)
+│   ├── portfolio/              # User holdings & position values (/portfolio)
+│   ├── leaderboard/            # User ROI rankings (/leaderboard)
+│   ├── layout.tsx              # Root layout & providers wrapper
+│   └── page.tsx                # Home / Landing page entry
+├── components/                 # Reusable UI components
+│   ├── dashboard/              # StockCard, TradeModal, TickerGrid
+│   └── ui/                     # Translucent Cards, Navbar, Wallet Button
+├── contracts/                  # Foundry Smart Contract Suite
+│   ├── lib/                    # OpenZeppelin Dependencies
+│   ├── script/                 # Deployment Scripts (Deploy.s.sol)
+│   ├── test/                   # Contract Unit Tests (StockAMM.t.sol)
+│   └── src/                    # StockAMM & Synthetic Token Solidity logic
+├── price-setter/               # Autonomous Oracle Relayer
+│   ├── index.ts                # Main execution loop
+│   ├── package.json            # Relayer dependencies
+│   └── .env.example            # Relayer environment configuration
+├── public/                     # Static assets
+│   └── hero-bg.mp4             # Red cyber ambient video background
+├── vercel.json                 # Vercel deployment configuration
+├── package.json                # Project root configuration
+└── README.md                   # Project documentation
+
+```
+
+---
+
+## ⚡ Local Development Setup
+
+### 1. Prerequisites
+
+- **Node.js:** `v18.x` or higher
+- **Package Manager:** `npm`, `yarn`, or `pnpm`
+- **Web3 Wallet:** MetaMask or Rabby configured for **Monad Testnet**
+
+### 2. Installation Steps
+
+```bash
+# Clone the repository
+git clone [https://github.com/PratyushGupta21/PulseStock.git](https://github.com/PratyushGupta21/PulseStock.git)
+cd PulseStock
+
+# Install root dependencies
+npm install
+
+```
+
+### 3. Environment Setup
+
+Create a `.env.local` file in the root directory:
+
+```env
+NEXT_PUBLIC_MONAD_RPC_URL="[https://testnet-rpc.monad.xyz](https://testnet-rpc.monad.xyz)"
+NEXT_PUBLIC_CHAIN_ID="10143"
+NEXT_PUBLIC_STOCK_AMM_ADDRESS="0xYourDeployedContractAddress"
+
+```
+
+### 4. Running Development Server
+
+```bash
+# Start Next.js frontend
+npm run dev
+
+```
+
+Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) in your browser to test the platform.
+
+### 5. Running the Price Setter Service (Optional)
 
 ```bash
 cd price-setter
 npm install
-cp .env.example .env
-# Set PRIVATE_KEY and STOCK_AMM_ADDRESS in .env
-npm run update-prices
-```
-
----
-
-## 🚀 Quick Start
-
-### 1. Install Dependencies
-
-```bash
-# Frontend
-cd app
-npm install
-```
-
-### 2. Configure Environment
-
-```bash
-cd app
-cp .env.example .env.local
-```
-
-### 3. Run Dev Server
-
-```bash
-cd app
 npm run dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
-
 ---
-
-## 🎮 Demo Flow
-
-1. Connect MetaMask to **Monad Testnet** (Chain ID: `10143`)
-2. Claim 100,000 SUSD starter funds
-3. View Dashboard to see live prices anchored to AAPL ($225), TSLA ($210), NVDA ($125), etc.
-4. Trade any stock — see immediate price impact due to high bonding curve sensitivity
-5. Run `price-setter` script to simulate the daily 24h re-anchoring to new closing prices
-
----
-
-## 📄 License
-
-MIT License.
