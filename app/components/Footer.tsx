@@ -25,7 +25,7 @@ export function Footer() {
   ]
 
   return (
-    <footer className="border-t border-white/10 bg-black/80 backdrop-blur-md py-12">
+    <footer className="bg-zinc-950/95 border-t border-white/10 z-10 relative py-12">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
           {/* Brand */}
@@ -33,7 +33,7 @@ export function Footer() {
             <div className="mb-4">
               <PulseStockLogo />
             </div>
-            <p className="text-[#9a9a9a] text-sm leading-relaxed">
+            <p className="text-zinc-400 text-sm leading-relaxed">
               Synthetic equity trading anchored to real-world closing prices, powered by Monad&apos;s parallel EVM.
             </p>
           </div>
@@ -44,7 +44,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {platformLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-[#9a9a9a] text-sm hover:text-white transition-colors">
+                  <Link href={link.href} className="text-zinc-400 text-sm hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -58,7 +58,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {companyLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-[#9a9a9a] text-sm hover:text-white transition-colors">
+                  <Link href={link.href} className="text-zinc-400 text-sm hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -72,7 +72,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {legalLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-[#9a9a9a] text-sm hover:text-white transition-colors">
+                  <Link href={link.href} className="text-zinc-400 text-sm hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -83,10 +83,10 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[#9a9a9a] text-xs font-mono">
+          <p className="text-zinc-400 text-xs font-mono">
             © 2026 Pulse Stock. All rights reserved.
           </p>
-          <p className="text-[#9a9a9a] text-xs font-mono">
+          <p className="text-zinc-400 text-xs font-mono">
             Real Equity Anchors • Institutional Terminal Architecture
           </p>
         </div>

@@ -25,7 +25,7 @@ export default function DashboardPage() {
         <source src="/hero-bg.mp4" type="video/mp4" />
       </video>
 
-      <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] z-[1] pointer-events-none" />
+      <div className="fixed inset-0 bg-black/40 z-[1] pointer-events-none" />
 
       <div className="relative z-10 bg-transparent min-h-screen">
         <Navbar />
